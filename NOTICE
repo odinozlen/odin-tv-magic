@@ -1,0 +1,24 @@
+Odin TV Magic
+Copyright (c) 2026 Odin Enes Özlen (@odinozlen, hi@odinozlen.com). MIT License (see LICENSE).
+
+This product includes or is derived from the following third-party work:
+
+1. QR Code generator library (Java), app/src/io/nayuki/qrcodegen/
+   Copyright (c) Project Nayuki. MIT License (license text in each file header).
+   https://www.nayuki.io/page/qr-code-generator-library
+
+2. SPAKE2 (app/src/com/odin/tvpanel/Spake2.java) is a Java re-implementation written from
+   BoringSSL crypto/curve25519/spake25519.cc, Copyright 2016 The BoringSSL Authors,
+   Apache License 2.0. The M and N points are taken from that file.
+   https://boringssl.googlesource.com/boringssl/
+
+3. The ADB wireless-debugging pairing and TLS transport (AdbPairing.java, AdbClient.java) follow the
+   Android Open Source Project packages/modules/adb (pairing_auth, pairing_connection, tls,
+   protocol.txt), Copyright The Android Open Source Project, Apache License 2.0.
+
+4. The Philips JointSpace v6 pairing flow and shared pairing key (JointSpace.java) are as documented
+   by pylips (https://github.com/eslavnov/pylips, MIT) and ha-philipsjs
+   (https://github.com/danielperna84/ha-philipsjs, MIT).
+
+Philips and Ambilight are trademarks of Koninklijke Philips N.V. Android, Android TV and Google TV are
+trademarks of Google LLC. This project is not affiliated with, endorsed or sponsored by them.

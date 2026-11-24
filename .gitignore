@@ -1,0 +1,25 @@
+# build output and local toolchain
+build/
+.toolchain
+*.apk
+*.idsig
+
+# signing keys and secrets: never commit
+*.jks
+*.keystore
+*.p12
+keystore.properties
+signing.properties
+*.pem
+*.key
+adbkey
+adbkey.pub
+.env
+.env.*
+
+# local state / personal notes
+*.log
+local/
+.DS_Store
+.idea/
+.vscode/

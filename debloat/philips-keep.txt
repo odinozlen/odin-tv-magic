@@ -1,0 +1,25 @@
+# Philips Android TV: packages that must stay ENABLED.
+# Each was tested: disabling it broke something, or it is part of a core TV function.
+# Format: package <TAB> what breaks
+#
+# General rule on Philips: be very careful with org.droidtv.*, com.tpv.*, com.tpvision.*
+# and com.mediatek.*. Inspect first (dumpsys package), disable one at a time, test.
+
+org.droidtv.channels	THE Sources drawer itself; HDMI switching is gone without it
+org.droidtv.eum	"How to / Help": the Sources drawer depends on it and stops opening (tested twice)
+org.droidtv.fastip	FAST channel promo: Sources crashes with ActivityNotFoundException when it is missing
+org.droidtv.aurora	Ambient app: disabling it makes xtv retry in a loop (logs, CPU)
+org.droidtv.tv.frameworklogger	Do not disable: Philips re-enables it at boot and something calls it constantly ("not found" spam). Restart it instead (see docs/philips-netflix-freeze.md)
+org.droidtv.playtv	Live TV / HDMI playback
+org.droidtv.xtv	TV framework
+org.droidtv.settings	Philips settings (picture, sound, Ambilight menus)
+org.droidtv.tvsystemui	TV system UI (volume bar, menus)
+org.droidtv.hdmiservice	HDMI inputs
+io.mimi.sdk.service	Part of the audio chain
+com.google.android.gms	Google Play services
+com.google.android.gsf	Google services framework
+com.android.vending	Play Store
+com.android.systemui	System UI
+com.android.tv.settings	Android settings
+com.google.android.katniss	Voice search / remote microphone
+com.google.android.tv.remote.service	Google TV Remote (phone app) support

@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="TV Magic">
+<meta name="theme-color" content="#0e0f11">
+<meta name="referrer" content="no-referrer">
+<link rel="apple-touch-icon" href="/icon-magic.png">
+<link rel="manifest" href="/manifest.json">
+<title>Odin TV Magic</title>
+<style>
+  :root {
+    --bg: #0a0b0e;
+    --surface: #16171c;
+    --surface-2: #202228;
+    --surface-3: #2b2d35;
+    --line: rgba(255,255,255,.08);
+    --text: #f5f6f8;
+    --dim: #9b9ea8;
+    --faint: #63666f;
+    --accent: #5b8cff;
+    --accent-soft: rgba(91,140,255,.16);
+    --accent-text: #a8c1ff;
+    --ok: #34d17a;
+    --warn: #ffb340;
+    --bad: #ff5b5b;
+    --hack: #39ff7a;
+    --r: 18px;
+    --tabh: 64px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(120% 50% at 50% -10%, rgba(91,140,255,.14), transparent 60%), var(--bg);
+    background-attachment: fixed; color: var(--text);
+    font: 15px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+    -webkit-user-select: none; user-select: none; overflow-x: hidden;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  [hidden] { display: none !important; }
+  svg.i { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  .wrap { max-width: 520px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + var(--tabh) + 40px); }
+  header { display: flex; align-items: center; justify-content: space-between; margin: 4px 2px 18px; gap: 12px; }
+  h1 { font-size: 30px; letter-spacing: -.025em; margin: 0; font-weight: 800; }
+  .now { color: var(--dim); font-size: 13.5px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  header > div:first-child { min-width: 0; }
+  .status { flex: none; }
+  .now b { color: var(--text); font-weight: 600; }
+  .status { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--dim); background: var(--surface); border: 1px solid var(--line); padding: 7px 12px; border-radius: 99px; white-space: nowrap; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+  .dot.on { background: var(--ok); box-shadow: 0 0 0 3px rgba(52,209,122,.18); }
+  .dot.off { background: var(--bad); }
+
+  .page { display: none; animation: in .2s ease; }
+  .page.show { display: block; }
+  @keyframes in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  h2 { font-size: 20px; font-weight: 750; letter-spacing: -.015em; margin: 28px 2px 4px; }
+  .lead { color: var(--dim); font-size: 13.5px; margin: 0 2px 12px; line-height: 1.45; }
+  h2 + .grid, h2 + .list, h2 + .card, h2 + .seg { margin-top: 12px; }
+  .card { background: linear-gradient(180deg, #1a1b21, #15161b); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .hint { color: var(--dim); font-size: 13px; line-height: 1.45; }
+  .hint b { color: var(--text); font-weight: 600; }
+  ol.steps { margin: 0; padding-left: 20px; color: var(--dim); font-size: 13px; line-height: 1.55; }
+  ol.steps b { color: var(--text); font-weight: 600; }
+  h3 { margin: 0; font-size: 17px; font-weight: 700; }
+
+  /* buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 12px; border: 0; font-size: 14.5px; font-weight: 650; flex: none; transition: transform .1s, opacity .1s; }
+  .btn:active, .primary:active, .tool:active, .app:active, .src:active, .tile:active, .row.tap:active { transform: scale(.97); }
+  .btn.fill, .primary { background: var(--accent); color: #fff; box-shadow: 0 6px 18px -8px rgba(91,140,255,.9); }
+  .btn.tint { background: var(--accent-soft); color: var(--accent-text); }
+  .btn.gray { background: var(--surface-3); color: var(--text); }
+  .btn.ok { background: rgba(52,209,122,.15); color: #7fe3a9; }
+  .primary { border: 0; border-radius: 14px; height: 48px; padding: 0 16px; font-weight: 700; font-size: 16px; width: 100%; }
+  .primary:disabled { opacity: .4; box-shadow: none; }
+  .ghost { border: 1px solid var(--line); background: var(--surface-2); border-radius: 14px; height: 46px; font-weight: 650; }
+  .link { color: var(--accent-text); background: none; border: 0; padding: 12px 0; margin: -12px 0; font-size: 14.5px; font-weight: 650; flex: none; }
+  .link.bad { color: #ff8a8a; }
+  .busy { opacity: .55; pointer-events: none; }
+  .btn.busy::after, .primary.busy::after, .link.busy::after, .chip.busy::after, .spin::after {
+    content: ""; display: inline-block; width: 11px; height: 11px; margin-left: 4px;
+    border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* status card */
+  .ramcard { display: flex; align-items: center; gap: 16px; }
+  .ring { position: relative; width: 76px; height: 76px; flex: none; }
+  .ring svg { width: 76px; height: 76px; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 8; }
+  .ring .bg { stroke: var(--surface-3); }
+  .ring .fg { stroke: var(--ok); stroke-linecap: round; transition: stroke-dashoffset .5s, stroke .5s; }
+  .ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .ramtxt { flex: 1; min-width: 0; }
+  .ramtxt .t { font-size: 16px; font-weight: 700; }
+  .ramtxt .s { color: var(--dim); font-size: 13px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .ramtxt .btn { margin-top: 10px; }
+  .result { color: var(--ok); font-size: 13px; margin-top: 10px; text-align: center; }
+  #cleanSub { min-height: 2.7em; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .result.hint { color: var(--dim); }
+  h1 .magic { color: var(--accent); }
+  .np .glyph { width: 100%; height: 100%; display: grid; place-items: center; color: var(--accent); }
+  .np .glyph svg { width: 22px; height: 22px; }
+  .src.wait { opacity: .45; pointer-events: none; }
+  .btn.wide { width: 100%; height: 46px; margin-top: 14px; font-size: 15.5px; border-radius: 14px; }
+  .src .ic.home { background: var(--accent-soft); color: var(--accent-text); }
+  .src .ic.tv { background: rgba(48,209,88,.14); color: var(--ok); }
+  .sheet-x { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: var(--surface-3); color: var(--dim); display: grid; place-items: center; z-index: 2; }
+  .sheet-x svg { width: 16px; height: 16px; stroke-width: 2.4; }
+  /* bigger touch area than the drawing (Apple/Google: about 44px) */
+  .sheet-x::before, .tog::before, .sw::before { content: ""; position: absolute; inset: -8px; }
+  /* mini player: floats just above the tab bar while an app or input is on screen (never moves the page) */
+  .np { position: fixed; z-index: 14; left: 50%; transform: translateX(-50%); width: min(calc(100% - 20px), 500px);
+    bottom: calc(env(safe-area-inset-bottom) + var(--tabh) + 8px);
+    display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 8px; border-radius: 18px;
+    background: rgba(30,32,40,.92); border: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(24px) saturate(1.5); -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    box-shadow: 0 12px 30px -10px rgba(0,0,0,.85); animation: npin .22s ease; }
+  @keyframes npin { from { opacity: 0; transform: translate(-50%, 10px); } }
+  body.np-on .wrap { padding-bottom: calc(env(safe-area-inset-bottom) + var(--tabh) + 110px); }
+  body.np-on .toast { bottom: calc(env(safe-area-inset-bottom) + var(--tabh) + 92px); }
+  .np .ic { width: 44px; height: 44px; border-radius: 12px; overflow: hidden; background: var(--surface-2); flex: none; }
+  .np .ic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .npt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .npt small { color: var(--dim); font-size: 11.5px; font-weight: 600; }
+  .npt b { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .npb { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--surface-3); display: grid; place-items: center; flex: none; }
+  .npb svg { width: 18px; height: 18px; }
+  .npb.main { width: 44px; height: 44px; background: var(--accent); color: #fff; }
+  .npb:active { transform: scale(.92); }
+  .src.on { border-color: var(--accent); background: rgba(91,140,255,.12); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .src.on .ic { background: var(--accent); color: #fff; }
+  .tpad { position: relative; width: 100%; aspect-ratio: 1.15; border-radius: 22px; touch-action: none; overflow: hidden;
+    background: radial-gradient(circle at 50% 35%, #262830, #1a1b21 75%); border: 1px solid var(--line); }
+  .thint { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; color: var(--faint); font-size: 12.5px; pointer-events: none; }
+  .tdot { position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: rgba(91,140,255,.25);
+    border: 1px solid rgba(91,140,255,.6); opacity: 0; transition: opacity .15s; pointer-events: none; }
+  .tdot.on { opacity: 1; }
+  .handle { color: var(--faint); font-size: 20px; padding: 6px 4px; touch-action: none; cursor: grab; flex: none; line-height: 1; }
+  .row.dragging { background: var(--surface-3); position: relative; z-index: 2; box-shadow: 0 10px 24px -10px rgba(0,0,0,.9); }
+  #onboard { position: fixed; inset: 0; z-index: 35; display: flex; flex-direction: column; padding: calc(env(safe-area-inset-top) + 16px) 20px calc(env(safe-area-inset-bottom) + 20px);
+    background: radial-gradient(120% 60% at 50% 0%, rgba(91,140,255,.18), transparent 60%), var(--bg); }
+  .ob-top { display: flex; justify-content: space-between; align-items: center; }
+  .ob-dots { display: flex; gap: 6px; }
+  .ob-dots i { width: 22px; height: 5px; border-radius: 5px; background: var(--surface-3); }
+  .ob-dots i.on { background: var(--accent); }
+  .ob-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; text-align: center; padding: 10px 0; }
+  .ob-body h3 { font-size: 26px; font-weight: 800; }
+  .ob-body .big-ic { width: 76px; height: 76px; border-radius: 20px; margin: 0 auto; display: grid; place-items: center; color: #fff; }
+  .ob-body .big-ic svg { width: 38px; height: 38px; }
+  .ob-body .hint { font-size: 14.5px; }
+  .ob-apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 8px; text-align: center; margin-top: 6px; }
+  .ob-apps > * { min-width: 0; }
+  .ob-apps .app { position: relative; }
+  .ob-body > :first-child { margin-top: auto; }
+  .ob-body > :last-child { margin-bottom: auto; }
+  .ob-apps .app.on .ic { box-shadow: 0 0 0 3px var(--accent); }
+  .ob-apps .app:not(.on) .ic { opacity: .45; }
+  .ob-actions { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  .a2hs-icon { display: grid; place-items: center; margin: 8px 0 12px; }
+  .a2hs-icon img { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 10px 24px -10px rgba(0,0,0,.9); }
+  .ios-share { display: inline-block; width: 14px; height: 16px; vertical-align: -2px; background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8c1ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12M8 7l4-4 4 4M5 12v8h14v-8'/%3E%3C/svg%3E"); }
+  .kvs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .kv { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+  .kv span { display: block; color: var(--dim); font-size: 12px; font-weight: 600; }
+  .kv b { display: block; font-size: 15px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+  /* apps */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .grid.four { grid-template-columns: repeat(4, 1fr); gap: 14px 8px; }
+  .grid > * { min-width: 0; }
+  .app { border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 12px; font-weight: 550; color: var(--text); }
+  .app .ic { width: 60px; height: 60px; border-radius: 16px; overflow: hidden; background: var(--surface-2); box-shadow: 0 6px 16px -8px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.06); }
+  .app .ic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .app .lbl { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .app.busy .ic { animation: pulse .9s ease infinite alternate; }
+  @keyframes pulse { to { opacity: .4; } }
+  .empty { color: var(--dim); font-size: 13px; text-align: center; padding: 16px; border: 1px dashed var(--line); border-radius: var(--r); grid-column: 1 / -1; }
+
+  .src { border: 1px solid var(--line); background: linear-gradient(180deg, #1a1b21, #15161b); border-radius: 16px; padding: 12px; text-align: left; display: flex; align-items: center; gap: 12px; }
+  .src .ic { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: rgba(255,179,64,.15); color: var(--warn); flex: none; }
+  .src .t { display: flex; flex-direction: column; min-width: 0; }
+  .src b { font-weight: 700; font-size: 14.5px; overflow-wrap: anywhere; line-height: 1.2; }
+  .src small { color: var(--dim); font-size: 12px; }
+
+  .tool { border: 1px solid var(--line); background: linear-gradient(180deg, #1a1b21, #15161b); border-radius: 16px; padding: 14px 4px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; position: relative; }
+  .tool .ic { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #fff; }
+  .tool .lbl { max-width: 100%; padding: 0 3px; text-align: center; line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; hyphens: auto; }
+  .tool.busy::after { content: ""; position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--dim); border-right-color: transparent; animation: spin .7s linear infinite; }
+  .c-blue { background: linear-gradient(160deg, #6b9bff, #3d6ff0); }
+  .c-purple { background: linear-gradient(160deg, #b78bff, #8a55f0); }
+  .c-indigo { background: linear-gradient(160deg, #6f7cff, #4b4fd6); }
+  .c-red { background: linear-gradient(160deg, #ff7a6e, #e5483d); }
+  .c-green { background: linear-gradient(160deg, #4fe08f, #22b463); }
+  .c-orange { background: linear-gradient(160deg, #ffb35c, #f08a24); }
+  .c-gray { background: linear-gradient(160deg, #8a8f99, #5f636c); }
+  .c-teal { background: linear-gradient(160deg, #4fd6e0, #1fa3b3); }
+
+  .surprise {
+    width: 100%; margin-top: 28px; padding: 16px; text-align: left; border-radius: var(--r);
+    border: 1px solid rgba(57,255,122,.3); background: #06100a; color: var(--hack);
+    font: 700 15px/1.3 ui-monospace, "SF Mono", Menlo, monospace;
+    box-shadow: 0 0 24px -12px rgba(57,255,122,.6);
+  }
+  .surprise small { display: block; color: rgba(57,255,122,.6); font-size: 12px; font-weight: 500; margin-top: 3px; }
+  .surprise small:empty { display: none; }
+  .surprise.running { border-color: var(--bad); color: var(--bad); }
+
+  .setup { border-color: rgba(255,179,64,.4); }
+  .locked { opacity: .38; filter: grayscale(1); }
+  .bm-row { display: flex; justify-content: center; align-items: center; gap: 22px; }
+  .bm-row .npb { width: 48px; height: 48px; }
+  .bm-row .npb.main { width: 58px; height: 58px; }
+  .locked * { pointer-events: none; }
+  #setupManual > summary { font-size: 13px; color: var(--dim); cursor: pointer; }
+  .setup .state { color: var(--warn); font-size: 13px; font-weight: 650; margin-top: 3px; }
+  .codeRow { display: flex; gap: 8px; }
+  .codeRow input { flex: 1; min-width: 0; }
+  .codeRow .btn { height: auto; }
+  input.field, textarea.field {
+    width: 100%; font: inherit; font-size: 17px; color: var(--text); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; outline: none; resize: none;
+    -webkit-user-select: text; user-select: text;
+  }
+  input.field:focus, textarea.field:focus { border-color: var(--accent); }
+  input.code { font-size: 22px; letter-spacing: .3em; text-align: center; font-variant-numeric: tabular-nums; }
+  details summary { cursor: pointer; font-weight: 650; font-size: 14px; list-style: none; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "› "; color: var(--dim); }
+  details[open] summary::before { content: "⌄ "; }
+
+  /* lists (settings) */
+  .list { background: linear-gradient(180deg, #1a1b21, #15161b); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+  .row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); min-height: 58px; }
+  .row:first-child { border-top: 0; }
+  .row .grow { flex: 1; min-width: 0; font-weight: 600; }
+  .row .grow small { display: block; color: var(--dim); font-size: 12.5px; font-weight: 400; margin-top: 2px; line-height: 1.35; }
+  .row img { width: 34px; height: 34px; border-radius: 9px; flex: none; background: var(--surface-2); object-fit: cover; }
+  .row .ic { width: 34px; height: 34px; border-radius: 9px; flex: none; display: grid; place-items: center; color: #fff; }
+  .row .ic svg { width: 19px; height: 19px; }
+  .row.tap { width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; text-align: left; }
+  .chev { color: var(--faint); flex: none; width: 18px !important; height: 18px !important; }
+  .meta { color: var(--dim); font-size: 14px; font-weight: 600; flex: none; }
+  .meta.ok { color: var(--ok); }
+  .pill { font-size: 12px; font-weight: 700; padding: 4px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent-text); flex: none; }
+
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; padding: 3px; border-radius: 13px; background: var(--surface-2); border: 1px solid var(--line); }
+  .seg button { border: 0; background: transparent; border-radius: 10px; height: 36px; font-size: 14px; font-weight: 650; color: var(--dim); }
+  .seg button.on { background: var(--surface-3); color: var(--text); box-shadow: 0 2px 8px -2px rgba(0,0,0,.6); }
+  .chip { border: 1px solid var(--line); background: var(--surface-2); font-size: 13.5px; font-weight: 650; height: 40px; border-radius: 11px; }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tog { position: relative; width: 51px; height: 31px; border-radius: 99px; border: 0; background: #3a3c44; flex: none; transition: background .2s; }
+  .tog::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 2px 4px rgba(0,0,0,.3); }
+  .tog.on { background: var(--ok); }
+  .tog.on::after { transform: translateX(20px); }
+  .check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--faint); background: none; flex: none; padding: 0; }
+  .check.on { border-color: var(--accent); background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8'/%3E%3C/svg%3E") center/15px no-repeat; }
+  .sws { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+  .sw { position: relative; aspect-ratio: 1; border-radius: 50%; border: 2px solid rgba(255,255,255,.15); background: var(--c); box-shadow: 0 0 12px -3px var(--c); }
+  .sw:active { transform: scale(.9); }
+
+  /* picture */
+  .pic-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .cur { font-size: 21px; font-weight: 800; }
+  .cur small { display: block; color: var(--dim); font-size: 13px; font-weight: 500; }
+  .badge { font-size: 10.5px; font-weight: 800; letter-spacing: .05em; padding: 4px 8px; border-radius: 7px; color: #ffd36b; background: rgba(255,200,60,.12); }
+  .badge.dv { color: #c4b5ff; background: rgba(150,120,255,.15); }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tile { position: relative; overflow: hidden; border: 1px solid var(--line); background: var(--surface-2); text-align: left; border-radius: 14px; padding: 0 0 10px; display: flex; flex-direction: column; }
+  .tile i { display: block; height: 8px; background: var(--g); margin-bottom: 10px; }
+  .tile b { font-size: 14px; font-weight: 700; padding: 0 10px; }
+  .tile span { font-size: 11.5px; line-height: 1.3; color: var(--dim); padding: 2px 10px 0; }
+  .tile.scene span { white-space: normal; }
+  .tile.on { border-color: var(--accent); background: rgba(91,140,255,.12); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .tile.busy::after { content: ""; position: absolute; top: 14px; right: 9px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--text); border-right-color: transparent; animation: spin .7s linear infinite; }
+  .tiles.locked .tile:not(.busy) { opacity: .4; }
+  .pic-note { color: var(--accent-text); font-size: 12.5px; }
+  .pic-note:empty { display: none; }
+  .sep { border-top: 1px solid var(--line); }
+  .vhead { display: flex; justify-content: space-between; align-items: baseline; }
+  .vhead .k { color: var(--dim); font-size: 13.5px; font-weight: 600; }
+  .vhead .val { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .slide { display: flex; align-items: center; gap: 10px; }
+  .step { flex: none; width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--surface-3); display: grid; place-items: center; }
+  .step:active { transform: scale(.92); }
+  .step svg { width: 19px; height: 19px; }
+  .presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  input[type=range] { -webkit-appearance: none; appearance: none; flex: 1; min-width: 0; height: 8px; border-radius: 8px; outline: none;
+    background: linear-gradient(90deg, var(--accent) var(--p, 50%), var(--surface-3) var(--p, 50%)); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+  #vol.muted { --accent: #5a5d66; }
+
+  /* remote */
+  .remote { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 22px 14px; }
+  .pad { position: relative; width: min(74vw, 280px); aspect-ratio: 1; border-radius: 50%; touch-action: none;
+    background: radial-gradient(circle at 50% 30%, #2a2c34, #1c1d23 70%); border: 1px solid var(--line);
+    box-shadow: 0 18px 40px -18px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06); }
+  .pad .ar { position: absolute; width: 48px; height: 48px; display: grid; place-items: center; color: #c9ccd4; pointer-events: none; transition: color .1s, transform .1s; }
+  .pad .ar svg { width: 28px; height: 28px; stroke-width: 2.2; }
+  .pad .ar.up { top: 6%; left: 50%; transform: translateX(-50%); }
+  .pad .ar.down { bottom: 6%; left: 50%; transform: translateX(-50%) rotate(180deg); }
+  .pad .ar.left { left: 6%; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+  .pad .ar.right { right: 6%; top: 50%; transform: translateY(-50%) rotate(90deg); }
+  .pad .ar.hit { color: var(--accent); }
+  .pad .okb { position: absolute; left: 50%; top: 50%; width: 38%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
+    display: grid; place-items: center; font-weight: 800; font-size: 17px; letter-spacing: .04em;
+    background: linear-gradient(160deg, #3a3d47, #2a2c34); border: 1px solid rgba(255,255,255,.1); pointer-events: none; transition: background .1s, transform .1s;
+    box-shadow: 0 8px 18px -8px rgba(0,0,0,.9); }
+  .pad .okb.hit { background: var(--accent); transform: translate(-50%, -50%) scale(.95); }
+  .pad-hint { color: var(--faint); font-size: 12px; margin-top: -4px; }
+  #volCard.steps .slide { display: flex; justify-content: center; gap: 14px; }
+  #volCard.steps #volVal { font-size: 15px; color: var(--dim); }
+  .rkeys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; margin-top: 2px; }
+  .rkey { border: 0; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--dim); font-size: 12px; font-weight: 600; }
+  .rkey .rc { width: 58px; height: 58px; border-radius: 50%; background: var(--surface-3); color: var(--text); display: grid; place-items: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 6px 14px -8px rgba(0,0,0,.8); transition: transform .1s, background .1s, color .1s; }
+  .rkey .rc svg { width: 23px; height: 23px; }
+  .rkey:active .rc { transform: scale(.92); background: var(--accent-soft); color: var(--accent-text); }
+  .mute.on { background: rgba(255,91,91,.18); color: var(--bad); }
+
+  /* tab bar */
+  /* docked to the bottom edge: nothing shows below or around it */
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15;
+    height: calc(var(--tabh) + env(safe-area-inset-bottom));
+    padding: 6px max(10px, calc((100% - 500px) / 2)) calc(env(safe-area-inset-bottom) + 6px);
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px;
+    background: rgba(13,14,18,.94); border-top: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(24px) saturate(1.5); -webkit-backdrop-filter: blur(24px) saturate(1.5); }
+  .tabbar button { border: 0; background: transparent; border-radius: 17px; color: var(--faint); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10.5px; font-weight: 650; }
+  .tabbar button.on { color: var(--accent-text); background: var(--accent-soft); }
+
+  .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + var(--tabh) + 14px); transform: translate(-50%, 8px);
+    opacity: 0; visibility: hidden; pointer-events: none; transition: transform .2s, opacity .2s, visibility 0s linear .2s;
+    background: #2b2d35; border: 1px solid var(--line); color: var(--text); padding: 11px 16px; border-radius: 14px; font-size: 14px; font-weight: 550;
+    width: max-content; max-width: calc(100% - 40px); text-align: center; z-index: 30; box-shadow: 0 10px 30px -8px rgba(0,0,0,.7); }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; visibility: visible; pointer-events: auto; transition: transform .2s, opacity .2s; }
+  .toast.err { background: #4c2023; border-color: rgba(255,91,91,.4); }
+
+  .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.6); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
+  .scrim.show { opacity: 1; pointer-events: auto; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; max-width: 520px; margin: 0 auto; background: #17181d;
+    border-top: 1px solid var(--line); border-radius: 22px 22px 0 0; padding: 8px 16px calc(env(safe-area-inset-bottom) + 16px);
+    transform: translateY(105%); transition: transform .28s cubic-bezier(.2,.9,.3,1); max-height: 90vh; overflow-y: auto; }
+  .sheet.show { transform: none; }
+  .grab { width: 38px; height: 5px; border-radius: 5px; background: #3a3c44; margin: 0 auto 14px; }
+  .sheet h3 { font-size: 20px; margin-bottom: 4px; }
+  .sheet p { margin: 0 0 14px; color: var(--dim); font-size: 13.5px; line-height: 1.45; }
+  .sheet .actions { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 8px; margin-top: 12px; }
+  .sheet .actions.one { grid-template-columns: 1fr; }
+  .sheet .list { background: var(--bg); }
+  .grp { font-size: 12px; color: var(--dim); font-weight: 700; margin: 16px 4px 8px; text-transform: uppercase; letter-spacing: .05em; }
+  .primary.hack { background: var(--hack); color: #04140a; font-family: ui-monospace, Menlo, monospace; box-shadow: none; }
+  .shot { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 16/9; object-fit: contain; display: block; -webkit-touch-callout: default; -webkit-user-select: auto; }
+  .shot-wrap { position: relative; }
+  .shot-wrap .spin { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--dim); }
+
+  #pairScreen { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: radial-gradient(120% 60% at 50% 0%, rgba(91,140,255,.18), transparent 60%), var(--bg); }
+  #pairScreen .box { width: 100%; max-width: 360px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
+  #pairScreen h3 { font-size: 26px; font-weight: 800; }
+  #pairScreen .err { color: var(--bad); min-height: 20px; font-size: 14px; }
+  .lang { position: absolute; top: calc(env(safe-area-inset-top) + 14px); right: 16px; width: 104px; }
+  /* small phones (iPhone SE 1st gen, 320–350px) */
+  @media (max-width: 350px) {
+    h1 { font-size: 25px; }
+    .np { gap: 6px; }
+    .np .ic { width: 40px; height: 40px; }
+    .npb { width: 34px; height: 34px; }
+    .npb.main { width: 40px; height: 40px; }
+    .npb { position: relative; }
+    .npb::before { content: ""; position: absolute; inset: -4px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Odin TV <span class="magic">Magic</span></h1>
+      <div class="now" id="now" data-i18n="connecting">connecting…</div>
+    </div>
+    <div class="status"><span class="dot" id="dot"></span><span id="state">—</span></div>
+  </header>
+
+  <section class="np" id="npBar" hidden>
+    <span class="ic"><img id="npIcon" alt=""><span class="glyph" id="npGlyph" hidden></span></span>
+    <div class="npt"><small data-i18n="np.label">Playing now</small><b id="npName">—</b></div>
+    <button class="npb" data-r="voldown" aria-label="volume down"><svg class="i" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 12h4"/></svg></button>
+    <button class="npb main" data-r="playpause" aria-label="play/pause"><svg class="i" viewBox="0 0 24 24"><path d="M6 5l7 7-7 7z" fill="currentColor"/><path d="M16 5v14M20 5v14"/></svg></button>
+    <button class="npb" data-r="volup" aria-label="volume up"><svg class="i" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 12h4M17.5 10v4"/></svg></button>
+    <button class="npb" data-r="home" aria-label="home" data-cap="nav"><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></button>
+  </section>
+
+  <!-- ================= HOME ================= -->
+  <main class="page" data-page="home">
+    <section class="card stack" id="philipsHomeCard" hidden style="margin-bottom:10px">
+      <div>
+        <h3 data-i18n="philips.title">Connect Philips features</h3>
+        <div class="hint" style="margin-top:4px" data-i18n="philips.intro"></div>
+      </div>
+      <button class="primary" id="philipsHomePair" data-i18n="philips.start">Show PIN on TV</button>
+    </section>
+
+    <section class="card stack setup" id="setup" hidden style="margin-bottom:10px">
+      <div>
+        <h3 data-i18n="setup.title">Connect the panel to the TV</h3>
+        <div class="state" id="setupState"></div>
+      </div>
+      <div class="hint" id="setupBasic"></div>
+      <details id="setupManual">
+      <summary data-i18n="setup.manual">Set it up by hand</summary>
+      <div class="hint" style="margin-top:8px" data-i18n="setup.intro">The panel controls the TV through Android's debugging bridge (ADB). Turn it on once:</div>
+      <ol class="steps" style="margin-top:6px">
+        <li data-i18n-html="setup.s1"></li>
+        <li data-i18n-html="setup.s2"></li>
+      </ol>
+      <details id="setupA" open style="margin-top:8px">
+        <summary data-i18n="setup.classic"></summary>
+        <ol class="steps" style="margin-top:8px">
+          <li data-i18n-html="setup.a1"></li>
+          <li data-i18n-html="setup.a2"></li>
+        </ol>
+      </details>
+      <details id="setupB">
+        <summary data-i18n="setup.wireless"></summary>
+        <ol class="steps" style="margin-top:8px">
+          <li data-i18n-html="setup.b1"></li>
+          <li data-i18n-html="setup.b2"></li>
+        </ol>
+        <div class="codeRow" style="margin-top:10px">
+          <input class="field code" id="adbCode" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="000000">
+          <button class="btn fill" id="adbPair" data-i18n="setup.pair">Pair</button>
+        </div>
+      </details>
+      </details>
+      <button class="ghost" id="setupRetry" data-i18n="setup.retry">Check again</button>
+    </section>
+
+
+    <section class="card" id="stats">
+      <div class="ramcard">
+        <div class="ring">
+          <svg viewBox="0 0 76 76"><circle class="bg" cx="38" cy="38" r="32"/><circle class="fg" id="ramRing" cx="38" cy="38" r="32" stroke-dasharray="201" stroke-dashoffset="201"/></svg>
+          <b id="ramPct">–</b>
+        </div>
+        <div class="ramtxt">
+          <div class="t" data-i18n="ram.title">Memory</div>
+          <div class="s" id="ramSub"></div>
+        </div>
+      </div>
+      <div class="kvs">
+        <div class="kv"><span data-i18n="uptime">TV on for</span><b id="up">—</b></div>
+        <div class="kv" id="flStat" hidden><span data-i18n="logger">Philips logger</span><b id="fl">—</b></div>
+      </div>
+      <button class="btn fill wide" data-a="clean" data-cap="adb"><svg class="i" viewBox="0 0 24 24" style="width:19px;height:19px"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 10v6M14 10v6"/></svg><span data-i18n="clean">Free up memory</span></button>
+      <div class="result hint" id="cleanSub" data-i18n="clean.hint">Closes apps waiting in the background. What is on screen keeps playing.</div>
+    </section>
+
+    <h2 data-i18n="apps">Apps</h2>
+    <div class="grid four" id="apps" data-cap="apps"></div>
+
+    <div id="sourcesBox" hidden>
+      <h2 data-i18n="sources">Sources</h2>
+      <div class="grid" id="sources"></div>
+    </div>
+
+    <h2 data-i18n="tools">Tools</h2>
+    <div class="grid four" style="gap:8px">
+      <button class="tool" data-open="kb" data-cap="text"><span class="ic c-blue"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M8 14h8"/></svg></span><span class="lbl" data-i18n="keyboard">Keyboard</span></button>
+      <button class="tool" id="openShot" data-cap="adb"><span class="ic c-purple"><svg class="i" viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/></svg></span><span class="lbl" data-i18n="screen">Screenshot</span></button>
+      <button class="tool" data-a="sleep" data-cap="sleep"><span class="ic c-indigo"><svg class="i" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="lbl" data-i18n="sleep">Sleep</span></button>
+      <button class="tool" data-a="reboot" data-cap="adb"><span class="ic c-red"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span><span class="lbl" data-i18n="restart">Restart</span></button>
+    </div>
+
+    <button class="surprise" id="openSurprise" hidden data-cap="adb">
+      <span id="surpriseLabel">&gt; SURPRISE_</span>
+      <small id="surpriseSub"></small>
+    </button>
+  </main>
+
+  <!-- ================= REMOTE ================= -->
+  <main class="page" data-page="remote">
+    <section class="card stack" id="volCard" data-cap="volume">
+      <div class="vhead"><span class="k" data-i18n="volume">Volume</span><span class="val" id="volVal">—</span></div>
+      <div class="slide">
+        <button class="step" data-vol="-1" aria-label="-"><svg class="i" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 12h4"/></svg></button>
+        <input type="range" id="vol" min="0" max="60" step="1" value="0">
+        <button class="step" data-vol="1" aria-label="+"><svg class="i" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 12h4M17.5 10v4"/></svg></button>
+        <button class="step mute" id="mute" aria-label="mute"><svg class="i" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg></button>
+      </div>
+    </section>
+
+    <section class="card stack" id="basicMedia" hidden style="margin-top:10px">
+      <div class="bm-row">
+        <button class="npb" data-r="rewind" aria-label="rewind"><svg class="i" viewBox="0 0 24 24"><path d="M11 6l-7 6 7 6zM20 6l-7 6 7 6z" fill="currentColor"/></svg></button>
+        <button class="npb main" data-r="playpause" aria-label="play/pause"><svg class="i" viewBox="0 0 24 24"><path d="M6 5l7 7-7 7z" fill="currentColor"/><path d="M16 5v14M20 5v14"/></svg></button>
+        <button class="npb" data-r="forward" aria-label="forward"><svg class="i" viewBox="0 0 24 24"><path d="M4 6l7 6-7 6zM13 6l7 6-7 6z" fill="currentColor"/></svg></button>
+      </div>
+      <div class="hint" style="text-align:center" data-i18n="basic.remote">The other remote keys need the setup on the TV: open Odin TV Magic there.</div>
+    </section>
+
+    <section class="card remote" style="margin-top:10px">
+      <div class="seg" id="padMode" style="width:100%">
+        <button data-pad="buttons" data-i18n="pad.buttons">Buttons</button>
+        <button data-pad="touch" data-i18n="pad.touch">Touchpad</button>
+      </div>
+      <div class="tpad" id="tpad" hidden data-cap="nav"><span class="tdot" id="tdot"></span><span class="thint" data-i18n="tpad.hint">Swipe to move · tap for OK</span></div>
+      <div class="pad" id="pad" data-cap="nav">
+        <div class="ar up" data-dir="up"><svg class="i" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></div>
+        <div class="ar down" data-dir="down"><svg class="i" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></div>
+        <div class="ar left" data-dir="left"><svg class="i" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></div>
+        <div class="ar right" data-dir="right"><svg class="i" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></div>
+        <div class="okb" id="okb">OK</div>
+      </div>
+      <div class="pad-hint" data-i18n="pad.hint">Tap, swipe or hold</div>
+      <div class="rkeys">
+        <button class="rkey" data-r="back" data-cap="nav"><span class="rc"><svg class="i" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></span><span data-i18n="back">Back</span></button>
+        <button class="rkey" data-r="home" data-cap="nav"><span class="rc"><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><span data-i18n="home">Home</span></button>
+        <button class="rkey" data-r="options" data-cap="nav"><span class="rc"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></span><span data-i18n="menu">Menu</span></button>
+        <button class="rkey" data-open="kb" data-cap="text"><span class="rc"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M8 14h8"/></svg></span><span data-i18n="keyboard">Keyboard</span></button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= PICTURE (Philips) ================= -->
+  <main class="page" data-page="picture">
+    <section class="card stack" id="philipsPairCard" hidden>
+      <h3 data-i18n="philips.title">Connect Philips features</h3>
+      <div class="hint" data-i18n="philips.intro"></div>
+      <button class="primary" id="philipsPair" data-i18n="philips.start">Show PIN on TV</button>
+    </section>
+
+    <section class="card stack" id="picCard" hidden>
+      <div class="pic-head">
+        <div><div class="hint" data-i18n="pic.style">Picture style</div><div class="cur" id="picNow">—</div></div>
+        <span class="badge" id="picBadge" hidden>HDR</span>
+      </div>
+      <div class="tiles" id="styles" data-cap="adb"></div>
+      <div class="pic-note" id="picNote"></div>
+      <div class="sep"></div>
+      <div class="vhead"><span class="k" data-i18n="brightness">Brightness</span><span class="val" id="brightVal">—</span></div>
+      <div class="slide">
+        <button class="step" data-step="-5" aria-label="-"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 4v1.5M12 18.5V20M4 12h1.5M18.5 12H20"/></svg></button>
+        <input type="range" id="bright" min="0" max="100" step="1" value="50">
+        <button class="step" data-step="5" aria-label="+"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></button>
+      </div>
+      <div class="presets">
+        <button class="chip" data-b="20" data-i18n="b.night">Night</button>
+        <button class="chip" data-b="50" data-i18n="b.evening">Evening</button>
+        <button class="chip" data-b="75" data-i18n="b.day">Day</button>
+        <button class="chip" data-b="100" data-i18n="b.max">Max</button>
+      </div>
+    </section>
+
+    <h2 lang="en" id="ambTitle" hidden>Ambilight</h2>
+    <section class="card stack" id="ambCard" hidden>
+      <div class="seg">
+        <button data-amb="on" id="ambOn" data-i18n="on">On</button>
+        <button data-amb="off" id="ambOff" data-i18n="off">Off</button>
+        <button data-amb="video" data-i18n="amb.video">Video</button>
+        <button data-amb="music" data-i18n="amb.music">Music</button>
+      </div>
+      <div class="sws">
+        <button class="sw" style="--c:#ff2a2a" data-rgb="255,0,0" aria-label="red"></button>
+        <button class="sw" style="--c:#ff8a1a" data-rgb="255,110,0" aria-label="orange"></button>
+        <button class="sw" style="--c:#ffd9a8" data-rgb="255,170,90" aria-label="warm white"></button>
+        <button class="sw" style="--c:#2bff6a" data-rgb="0,255,60" aria-label="green"></button>
+        <button class="sw" style="--c:#20e4ff" data-rgb="0,210,255" aria-label="cyan"></button>
+        <button class="sw" style="--c:#2c5bff" data-rgb="0,40,255" aria-label="blue"></button>
+        <button class="sw" style="--c:#a33dff" data-rgb="140,0,255" aria-label="purple"></button>
+        <button class="sw" style="--c:#ff3dbb" data-rgb="255,0,150" aria-label="pink"></button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= SETTINGS ================= -->
+  <main class="page" data-page="settings">
+    <h2 style="margin-top:4px" data-i18n="upgrade.title">Upgrade your TV</h2>
+    <div class="lead" data-i18n="upgrade.sub">Add features your TV doesn't have.</div>
+    <div class="list" id="addonList" data-cap="adb"><div class="row"><div class="hint">…</div></div></div>
+
+    <h2 data-i18n="look.title">Change your TV's look</h2>
+    <div class="lead" data-i18n="look.sub">Switch to a clean home screen without ads and recommendations.</div>
+    <div class="list" id="homeList" data-cap="adb"><div class="row"><div class="hint">…</div></div></div>
+    <div class="hint" id="homeHint" style="margin:10px 4px 0"></div>
+    <button class="link" id="homeRestore" hidden style="margin:12px 4px 0" data-i18n="home.restore">Restore original home screen</button>
+
+    <h2 data-i18n="speed.title">Speed up your TV</h2>
+    <div class="lead" data-i18n="speed.lead">Pre-installed apps you never open still run in the background and use memory.</div>
+    <div class="list">
+      <button class="row tap" id="speedRow" data-cap="adb">
+        <span class="ic c-orange"><svg class="i" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
+        <div class="grow"><span data-i18n="speed.row">Turn off unused apps</span><small id="speedSub"></small></div>
+        <span class="pill" id="speedCount" hidden></span>
+        <svg class="i chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+
+    <h2 data-i18n="favs">Apps on the home tab</h2>
+    <div class="lead" data-i18n="favs.lead">Drag ≡ to change the order.</div>
+    <div class="list" id="favOrder"></div>
+    <div class="grp" data-i18n="favs.more">More apps</div>
+    <div class="list" id="favList"><div class="row"><div class="hint">…</div></div></div>
+
+    <div id="styleSettings" hidden>
+      <h2 data-i18n="styles.show">Picture styles to show</h2>
+      <div class="list" id="styleList"></div>
+    </div>
+
+    <h2 data-i18n="lang">Language</h2>
+    <div class="seg" id="langSeg">
+      <button data-lang="en">English</button>
+      <button data-lang="tr">Türkçe</button>
+    </div>
+
+    <h2 data-i18n="party">Party mode</h2>
+    <div class="list">
+      <div class="row">
+        <div class="grow"><span data-i18n="party.name">Surprise</span><small data-i18n="party.desc"></small></div>
+        <button class="tog" id="partyTog" aria-label="party mode"></button>
+      </div>
+    </div>
+
+    <h2 data-i18n="phones">Paired phones</h2>
+    <div class="list" id="devList"></div>
+
+    <h2 data-i18n="adb">TV connection</h2>
+    <section class="card stack">
+      <div class="hint" id="adbInfo"></div>
+      <details>
+        <summary data-i18n="setup.wireless"></summary>
+        <div class="codeRow" style="margin-top:10px">
+          <input class="field code" id="adbCode2" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="000000">
+          <button class="btn fill" id="adbPair2" data-i18n="setup.pair">Pair</button>
+        </div>
+      </details>
+    </section>
+
+    <h2 data-i18n="about">About</h2>
+    <section class="card stack">
+      <div class="hint" id="about"></div>
+      <div class="hint" id="madeBy"></div>
+      <div class="hint" data-i18n="security"></div>
+      <button class="link bad" id="unpair" style="text-align:left" data-i18n="unpair">Unpair this phone</button>
+    </section>
+  </main>
+</div>
+
+<nav class="tabbar" id="tabbar">
+  <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg><span data-i18n="tab.home">Home</span></button>
+  <button data-tab="remote"><svg class="i" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="5"/><circle cx="12" cy="8" r="2"/><path d="M12 14v.01M12 17.5v.01"/></svg><span data-i18n="tab.remote">Remote</span></button>
+  <button data-tab="picture" id="tabPicture" hidden><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg><span data-i18n="tab.picture">Picture</span></button>
+  <button data-tab="settings"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span data-i18n="tab.settings">Settings</span></button>
+</nav>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="sheet" id="speedSheet">
+  <div class="grab"></div>
+  <h3 data-i18n="speed.title">Speed up the TV</h3>
+  <p data-i18n="speed.intro">Turn off pre-installed apps you don't use. Nothing is deleted: you can turn every app back on here.</p>
+  <div id="speedList"></div>
+  <div class="actions one"><button class="primary" id="speedGo" disabled data-i18n="speed.go">Turn off selected</button></div>
+  <div id="speedOffBox" hidden>
+    <div class="grp" data-i18n="speed.off">Turned off</div>
+    <div class="list" id="speedOffList"></div>
+  </div>
+</div>
+
+<div class="sheet" id="kbSheet">
+  <div class="grab"></div>
+  <h3 data-i18n="keyboard">Keyboard</h3>
+  <p data-i18n="kb.hint"></p>
+  <textarea class="field" id="kbText" rows="2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+  <div class="actions">
+    <button class="ghost" data-key="del">⌫</button>
+    <button class="ghost" data-key="enter">↵</button>
+    <button class="primary" id="kbSend" data-i18n="send">Send</button>
+  </div>
+</div>
+
+<div class="sheet" id="shotSheet">
+  <div class="grab"></div>
+  <h3 data-i18n="shot.title">Screenshot</h3>
+  <p data-i18n="shot.hint"></p>
+  <div class="shot-wrap"><img class="shot" id="shotImg" alt=""><div class="spin" id="shotSpin">…</div></div>
+  <div class="actions one"><button class="ghost" id="shotAgain" data-i18n="refresh">Refresh</button></div>
+</div>
+
+<div class="sheet" id="pinSheet">
+  <div class="grab"></div>
+  <h3 data-i18n="philips.title">Connect Philips features</h3>
+  <p data-i18n="philips.enter">Enter the PIN shown on the TV.</p>
+  <input class="field code" id="philipsPin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">
+  <div class="actions one"><button class="primary" id="philipsPinDone" data-i18n="philips.connect">Connect</button></div>
+</div>
+
+<div class="sheet" id="surSheet">
+  <div class="grab"></div>
+  <h3 style="font-family:ui-monospace,Menlo,monospace;color:var(--hack)">&gt; surprise.exe</h3>
+  <p data-i18n="party.sheet"></p>
+  <input class="field" id="surMsg" type="text" maxlength="60" autocomplete="off">
+  <div class="actions one" style="margin-top:12px"><button class="primary hack" id="surGo">START</button></div>
+</div>
+
+<div class="sheet" id="a2hsSheet">
+  <div class="grab"></div>
+  <div class="a2hs-icon"><img src="/icon-magic.png" alt=""></div>
+  <h3 style="text-align:center" data-i18n="a2hs.title">Add to Home Screen</h3>
+  <p id="a2hsText" style="text-align:center"></p>
+  <div class="actions one"><button class="primary" id="a2hsOk" data-i18n="a2hs.ok">Got it</button></div>
+</div>
+
+<div id="onboard" hidden>
+  <div class="ob-top"><div class="ob-dots" id="obDots"></div><button class="link" id="obSkip" data-i18n="ob.skipall">Skip</button></div>
+  <div class="ob-body" id="obBody"></div>
+  <div class="ob-actions"><button class="primary" id="obNext" data-i18n="ob.next">Continue</button><button class="link" id="obLater" data-i18n="ob.later">Not now</button></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="pairScreen" hidden>
+  <div class="seg lang" id="langSeg2"><button data-lang="en">EN</button><button data-lang="tr">TR</button></div>
+  <div class="box">
+    <h3 data-i18n="pair.title">Pair this phone</h3>
+    <div class="hint" data-i18n-html="pair.how"></div>
+    <input class="field code" id="pairCode" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+    <button class="primary" id="pairGo" data-i18n="pair.go">Pair</button>
+    <div class="err" id="pairErr"></div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

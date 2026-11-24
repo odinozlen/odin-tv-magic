@@ -1,0 +1,22 @@
+# Android TV / Google TV: conservative suggestions that are safe on most TVs.
+# Brand-specific lists: debloat/philips-android11.txt, or the tested lists of
+# https://github.com/Gathin23/cleanyourtv/tree/main/examples
+#
+# Format:  package <TAB> group <TAB> reason (English) <TAB> reason (Turkish)
+# Method:  pm disable-user --user 0 <package>      (never uninstall)
+# The panel never offers the launcher group while that launcher is the home screen,
+# and on Google TV it never offers com.google.android.videos or anything launcher-related.
+
+com.google.android.feedback	telemetry	Google feedback / crash upload	Google geri bildirim / çökme raporu gönderimi
+com.google.android.partnersetup	telemetry	Manufacturer setup helper, already done	Üretici kurulum yardımcısı, işi bitmiş
+com.android.printspooler	unused	Print queue (no printers on a TV)	Yazdırma kuyruğu (TV'de yazıcı yok)
+com.google.android.onetimeinitializer	unused	First-boot initializer, already done	İlk açılış başlatıcısı, işi bitmiş
+com.android.dynsystem	unused	Dynamic system updates (developer feature)	Dinamik sistem güncellemesi (geliştirici özelliği)
+com.android.cts.ctsshim	unused	Compatibility-test placeholder	Uyumluluk testi yer tutucusu
+com.android.cts.priv.ctsshim	unused	Compatibility-test placeholder	Uyumluluk testi yer tutucusu
+com.google.android.syncadapters.calendar	unused	Calendar sync (not used on a TV)	Takvim eşitleme (TV'de kullanılmaz)
+com.google.android.play.games	unused	Google Play Games	Google Play Oyunlar
+com.google.android.videos	unused	Google TV / Play Movies app (not on Google TV devices)	Google TV / Play Filmler uygulaması
+com.google.android.youtube.tvmusic	unused	YouTube Music (keep if you use it)	YouTube Music (kullanıyorsan açık bırak)
+com.google.android.marvin.talkback	unused	TalkBack screen reader (keep if you need it)	TalkBack ekran okuyucu (ihtiyacın varsa açık bırak)
+com.google.android.tvrecommendations	launcher	Feeds the stock launcher rows (only with another launcher)	Orijinal ana ekranın öneri satırları

@@ -1,0 +1,63 @@
+# Philips Android TV 11 (TP Vision, MediaTek "PH1M" platform)
+# Tested on: 50PUS8507/62, firmware PH1M_EA_9970A, Android 11, armeabi-v7a.
+# Same platform: 2020-2022 PUS7xxx/8xxx/OLED7xx sets. Check your own package list first.
+#
+# Format:  package <TAB> group <TAB> reason (English) <TAB> reason (Turkish)
+# Method:  pm disable-user --user 0 <package>      (never uninstall)
+# Undo:    pm enable <package>                     (or scripts/tv.sh restore)
+#
+# Groups:
+#   telemetry   logging / tracking / crash upload
+#   unused      features most people never use (keep the ones you use!)
+#   online      Philips cloud services (NetTV, registration incl. ACR tracking)
+#   regional    pre-installed apps that only exist in some countries
+#   preinstalled other pre-installed apps
+#   launcher    only together with an alternative launcher (Projectivy etc.)
+#
+# Packages Philips re-enables on every boot (disabling them is pointless):
+#   com.google.android.apps.mediashell, com.phorus.playfi.tv, io.mimi.tvapp
+
+org.droidtv.demome	telemetry	Retail demo mode (shop stickers, banners)	Mağaza demo modu (etiketler, afişler)
+org.droidtv.candeebug	telemetry	Philips debug/log collector (~12 MB RAM)	Philips hata ayıklama/log toplayıcı (~12 MB RAM)
+org.droidtv.usagelogger	telemetry	Usage statistics logger	Kullanım istatistiği kaydı
+org.droidtv.gel	telemetry	"Gathering" data collection service	"Gathering" veri toplama servisi
+com.google.android.feedback	telemetry	Google feedback / crash upload	Google geri bildirim / çökme raporu gönderimi
+android.autoinstalls.config.tpv.device	telemetry	Re-installs promoted apps automatically	Tanıtılan uygulamaları kendiliğinden geri kurar
+com.android.printspooler	unused	Print queue (no printers on a TV)	Yazdırma kuyruğu (TV'de yazıcı yok)
+com.google.android.onetimeinitializer	unused	First-boot initializer, already done	İlk açılış başlatıcısı, işi bitmiş
+com.android.cts.ctsshim	unused	Compatibility-test placeholder	Uyumluluk testi yer tutucusu
+com.android.cts.priv.ctsshim	unused	Compatibility-test placeholder	Uyumluluk testi yer tutucusu
+com.android.dynsystem	unused	Dynamic system updates (developer feature)	Dinamik sistem güncellemesi (geliştirici özelliği)
+org.droidtv.dropboxprovider	unused	Dropbox source for the media browser	Medya tarayıcı için Dropbox kaynağı
+org.droidtv.calmancalibrator	unused	CalMAN pro calibration (needs pro hardware)	CalMAN profesyonel kalibrasyon
+org.droidtv.nettvbrowser	unused	Philips web browser (~44 MB RAM)	Philips web tarayıcısı (~44 MB RAM)
+com.vewd.core.browserui	unused	Browser engine UI for the above	Tarayıcı motoru arayüzü
+com.google.android.play.games	unused	Google Play Games	Google Play Oyunlar
+com.google.android.videos	unused	Google TV / Play Movies app (inputs not affected, tested)	Google TV / Play Filmler uygulaması
+com.google.android.youtube.tvmusic	unused	YouTube Music for TV	YouTube Music (kullanıyorsan açık bırak)
+org.droidtv.contentexplorer	unused	USB/DLNA media browser (keep if you play USB files)	USB/DLNA medya tarayıcı (USB'den film izliyorsan açık bırak)
+org.droidtv.dlna	unused	DLNA/UPnP media sharing (keep if you use DLNA)	DLNA medya paylaşımı
+org.droidtv.usbbreakin	unused	"USB inserted" pop-up	"USB takıldı" penceresi
+org.droidtv.sunrise	unused	Sunrise alarm (Ambilight wake-up)	Gün doğumu alarmı
+org.droidtv.amazonalexa	unused	Amazon Alexa integration (~7 MB RAM)	Amazon Alexa (~7 MB RAM)
+org.droidtv.teletext	unused	Teletext	Teletekst
+org.droidtv.hbbtvopapp	unused	HbbTV operator app (broadcaster red-button services)	HbbTV yayıncı uygulaması
+com.phorus.playfi.softap	unused	DTS Play-Fi setup helper	DTS Play-Fi kurulum yardımcısı
+com.google.android.marvin.talkback	unused	TalkBack screen reader (keep if you need it!)	TalkBack ekran okuyucu (ihtiyacın varsa açık bırak)
+com.google.android.tts	unused	Google text-to-speech (needed by TalkBack)	Google metin okuma (TalkBack için gerekli)
+org.droidtv.nettvrecommender	online	NetTV video recommendations	NetTV video önerileri
+org.droidtv.nettvregistration	online	Philips registration, terms, ACR (automatic content recognition)	Philips kaydı, ACR (izlediğini tanıma) dahil
+org.droidtv.icp	online	Philips cloud sign-in	Philips bulut oturumu
+org.droidtv.nettv.market	online	Philips App Gallery (Play Store still works)	Philips App Gallery (Play Store çalışmaya devam eder)
+org.droidtv.nettv_launcherapp	online	NetTV entry point	NetTV girişi
+org.droidtv.nettvapps	online	NetTV app framework (standby tested, fine)	NetTV uygulama altyapısı
+com.exxen.android	regional	Exxen (Turkey)	Exxen (ön yüklü)
+com.trt.tabii.android	regional	TRT tabii (Turkey)	TRT tabii (ön yüklü)
+com.turkcell.ott	regional	Turkcell TV+ (Turkey)	Turkcell TV+ (ön yüklü)
+com.boosteroidtv.streaming	preinstalled	Boosteroid cloud gaming	Boosteroid bulut oyun
+com.rma.speedtesttv	preinstalled	SpeedTest TV	SpeedTest TV
+tv.twitch.android.app	preinstalled	Twitch	Twitch
+com.google.android.tvlauncher	launcher	Stock launcher. ONLY after another launcher is the default home app	Orijinal ana ekran. YALNIZCA başka bir ana ekran seçiliyken
+com.google.android.tvrecommendations	launcher	Feeds the stock launcher's rows (~14 MB RAM)	Orijinal ana ekranın öneri satırları
+org.droidtv.recommendation	launcher	Philips recommendation engine	Philips öneri motoru
+org.droidtv.philipstvdrawer	launcher	"Philips TV Collection" drawer	"Philips TV Collection" çekmecesi
