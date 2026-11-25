@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.1
+
+Philips: Ambilight and pairing explain themselves.
+
+- The Ambilight card is always on the Picture tab, with the pairing button in it: before, it only appeared
+  after pairing, and the pairing card did not say it was for Ambilight.
+- The panel asks the TV's JointSpace what it supports: Ambilight is hidden when the TV reports none, and a
+  TV whose JointSpace does not answer gets a plain message instead of a button that cannot work.
+- Pairing errors name the TV's reason (e.g. `CONCURRENT_PAIRING`, `TIMEOUT`) instead of "try again"; a
+  wrong PIN keeps the pairing open for another try.
+- Ambilight commands are checked: the panel reads the state back and says when the TV accepted a command
+  but did not change anything. Colour buttons now confirm too.
+- Ambilight *Video* after *Music* works: the panel no longer re-sends the Ambilight mode when it is
+  already set, which made the TV's Ambilight driver ignore the switch and keep following the sound.
+- Picture style: the panel asks the TV which app shows its quick menu instead of assuming the Android
+  TV 11 one (`org.droidtv.settings`), which Philips Google TV (e.g. 65PUS8808) does not have; "Read
+  styles" failed there with "Could not open the quick menu". A TV without such a menu now says that the
+  style is changed with the remote (brightness still works); the diagnostics show the menu and why it
+  failed.
+- *Picture › Philips diagnostics*: what the TV reports (model, Android version, JointSpace API version and
+  features, last error), with no ids, keys or addresses, to copy into a bug report.
+
 ## 1.0.0
 
 First public release.

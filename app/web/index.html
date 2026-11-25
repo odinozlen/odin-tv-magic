@@ -214,6 +214,8 @@
 
   .setup { border-color: rgba(255,179,64,.4); }
   .locked { opacity: .38; filter: grayscale(1); }
+  .amb-lock { display: grid; gap: 10px; }
+  .needpair { opacity: .38; filter: grayscale(1); }
   .bm-row { display: flex; justify-content: center; align-items: center; gap: 22px; }
   .bm-row .npb { width: 48px; height: 48px; }
   .bm-row .npb.main { width: 58px; height: 58px; }
@@ -533,6 +535,7 @@
     <section class="card stack" id="philipsPairCard" hidden>
       <h3 data-i18n="philips.title">Connect Philips features</h3>
       <div class="hint" data-i18n="philips.intro"></div>
+      <div class="hint" id="philipsNoJs" hidden data-i18n="philips.unreachable"></div>
       <button class="primary" id="philipsPair" data-i18n="philips.start">Show PIN on TV</button>
     </section>
 
@@ -560,13 +563,17 @@
 
     <h2 lang="en" id="ambTitle" hidden>Ambilight</h2>
     <section class="card stack" id="ambCard" hidden>
-      <div class="seg">
+      <div class="amb-lock" id="ambLock" hidden>
+        <div class="hint" data-i18n="amb.need_pair"></div>
+        <button class="primary" id="ambPair" data-i18n="philips.start">Show PIN on TV</button>
+      </div>
+      <div class="seg" id="ambSeg">
         <button data-amb="on" id="ambOn" data-i18n="on">On</button>
         <button data-amb="off" id="ambOff" data-i18n="off">Off</button>
         <button data-amb="video" data-i18n="amb.video">Video</button>
         <button data-amb="music" data-i18n="amb.music">Music</button>
       </div>
-      <div class="sws">
+      <div class="sws" id="ambSws">
         <button class="sw" style="--c:#ff2a2a" data-rgb="255,0,0" aria-label="red"></button>
         <button class="sw" style="--c:#ff8a1a" data-rgb="255,110,0" aria-label="orange"></button>
         <button class="sw" style="--c:#ffd9a8" data-rgb="255,170,90" aria-label="warm white"></button>
@@ -577,6 +584,7 @@
         <button class="sw" style="--c:#ff3dbb" data-rgb="255,0,150" aria-label="pink"></button>
       </div>
     </section>
+    <button class="link" id="philipsDiag" hidden style="margin:14px 4px 0" data-i18n="diag.open">Philips diagnostics</button>
   </main>
 
   <!-- ================= SETTINGS ================= -->
@@ -699,6 +707,14 @@
   <p data-i18n="philips.enter">Enter the PIN shown on the TV.</p>
   <input class="field code" id="philipsPin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">
   <div class="actions one"><button class="primary" id="philipsPinDone" data-i18n="philips.connect">Connect</button></div>
+</div>
+
+<div class="sheet" id="diagSheet">
+  <div class="grab"></div>
+  <h3 data-i18n="diag.open">Philips diagnostics</h3>
+  <p data-i18n="diag.hint"></p>
+  <textarea class="field" id="diagText" rows="9" readonly spellcheck="false" style="font:12px/1.4 ui-monospace,Menlo,monospace"></textarea>
+  <div class="actions one"><button class="primary" id="diagCopy" data-i18n="diag.copy">Copy</button></div>
 </div>
 
 <div class="sheet" id="surSheet">

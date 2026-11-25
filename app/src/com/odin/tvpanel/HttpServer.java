@@ -241,6 +241,9 @@ final class HttpServer implements Runnable {
                 case "picture":
                     json(out, 200, panel.picture.status());
                     return;
+                case "philips/diag":
+                    json(out, 200, panel.philipsDiagnostics());
+                    return;
                 case "settings":
                     json(out, 200, panel.settings.toJson().put("devices", panel.auth.list(dev[0])));
                     return;

@@ -129,7 +129,12 @@ final class Panel {
         // is not connected yet (otherwise the panel would look unpaired right after pairing).
         if (philips) {
             JSONObject p = new JSONObject().put("paired", js.paired());
-            if (js.paired()) {
+            // Is the TV's JointSpace there at all, and does it say it has Ambilight? (null = unknown)
+            js.system(false);
+            p.put("reachable", js.reachable());
+            Boolean amb = js.ambilightFeature();
+            p.put("has_ambilight", amb == null ? JSONObject.NULL : amb);
+            if (js.paired() && !Boolean.FALSE.equals(amb)) {
                 try {
                     p.put("ambilight", new JSONObject(js.get("ambilight/power")).optString("power"));
                 } catch (Exception e) {
@@ -749,45 +754,95 @@ final class Panel {
 
     Result philipsPair(String what, JSONObject body) throws Exception {
         if (!philips) return new Result(404, "philips.unsupported");
-        if ("start".equals(what)) {
-            js.pairStart();
-            return new Result(200, "philips.pin");
-        }
-        if ("finish".equals(what)) {
-            js.pairFinish(body.optString("pin"));
-            log("philips paired");
-            return new Result(200, "philips.paired");
+        try {
+            if ("start".equals(what)) {
+                js.pairStart();
+                return new Result(200, "philips.pin");
+            }
+            if ("finish".equals(what)) {
+                js.pairFinish(body.optString("pin"));
+                log("philips paired");
+                return new Result(200, "philips.paired");
+            }
+        } catch (JointSpace.PairError e) {
+            log("philips pairing refused: " + e.detail);
+            return new Result(502, e.getMessage(), e.detail);
+        } catch (IOException e) {
+            if (Strings.has(e.getMessage())) log("philips pairing: " + e.getMessage());
+            throw e;
         }
         return new Result(404, "not_found");
+    }
+
+    /** For a bug report: what the TV's JointSpace says about itself (no ids, keys or addresses). */
+    JSONObject philipsDiagnostics() throws Exception {
+        JSONObject d = new JSONObject().put("ok", true).put("app", VERSION)
+                .put("manufacturer", Build.MANUFACTURER).put("brand", Build.BRAND).put("model", Build.MODEL)
+                .put("sdk", Build.VERSION.SDK_INT).put("philips", philips);
+        if (philips) {
+            d.put("jointspace", js.diagnostics());
+            d.put("picture", picture.diagnostics());
+        }
+        return d;
     }
 
     Result ambilight(String what, JSONObject body) throws Exception {
         if (!philips) return new Result(404, "philips.unsupported");
         if (!js.paired()) return new Result(409, "philips.not_paired");
+        if (Boolean.FALSE.equals(js.ambilightFeature())) return new Result(404, "amb.unsupported");
+        // The TV accepting a request does not mean it did anything (seen on newer firmware):
+        // read the state back and say so when it did not change.
         switch (what) {
             case "on":
                 js.post("ambilight/power", new JSONObject().put("power", "On"));
-                return new Result(200, "amb.on");
+                return checkAmbilight("power", "power", "On", "amb.on");
             case "off":
                 js.post("ambilight/power", new JSONObject().put("power", "Off"));
-                return new Result(200, "amb.off");
+                return checkAmbilight("power", "power", "Off", "amb.off");
             case "video":
                 ambilightStyle("FOLLOW_VIDEO", "STANDARD");
-                return new Result(200, "amb.video");
+                return checkAmbilight("currentconfiguration", "styleName", "FOLLOW_VIDEO", "amb.video");
             case "music":
                 ambilightStyle("FOLLOW_AUDIO", "ENERGY_ADAPTIVE_BRIGHTNESS");
-                return new Result(200, "amb.music");
+                return checkAmbilight("currentconfiguration", "styleName", "FOLLOW_AUDIO", "amb.music");
             case "color":
                 ambilightColor(body.optInt("r"), body.optInt("g"), body.optInt("b"));
-                return new Result(200, "amb.color");
+                return checkAmbilight("mode", "current", "manual", "amb.color");
             default:
                 return new Result(404, "not_found");
         }
     }
 
+    private Result checkAmbilight(String path, String field, String want, String okKey) throws Exception {
+        String got = null;
+        for (int i = 0; i < 3; i++) {
+            SystemClock.sleep(250);
+            try {
+                got = new JSONObject(js.get("ambilight/" + path)).optString(field, null);
+            } catch (Exception e) {
+                got = null;  // cannot be read back on this TV: trust the accepted request
+                break;
+            }
+            if (want.equalsIgnoreCase(got)) return new Result(200, okKey);
+        }
+        if (got == null) return new Result(200, okKey);
+        js.noteError("ambilight/" + path + ": wanted " + want + ", TV reports " + got);
+        log("ambilight " + path + " did not change: " + got);
+        return new Result(502, "amb.no_effect");
+    }
+
     void ambilightStyle(String style, String setting) throws Exception {
         js.post("ambilight/power", new JSONObject().put("power", "On"));
-        js.post("ambilight/mode", new JSONObject().put("current", "internal"));
+        // Only when the mode really differs: on Philips (seen on 2020 MediaTek firmware) a redundant
+        // mode=internal makes the Ambilight driver think "follow video" is already applied, so
+        // music -> video was ignored and the light kept following the sound.
+        String mode = null;
+        try {
+            mode = new JSONObject(js.get("ambilight/mode")).optString("current", null);
+        } catch (Exception ignored) {
+            // unknown: set it
+        }
+        if (!"internal".equalsIgnoreCase(mode)) js.post("ambilight/mode", new JSONObject().put("current", "internal"));
         js.post("ambilight/currentconfiguration", new JSONObject()
                 .put("styleName", style).put("isExpert", false).put("menuSetting", setting));
     }

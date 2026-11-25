@@ -24,7 +24,7 @@ import java.util.List;
  */
 final class Picture {
     static final long NODE_BACKLIGHT = 2130968795L;
-    private static final String QUICK = "QuickSettingsActivity";
+    static final String QUICK_ACTION = "org.droidtv.action.EXPERIENCE_MENU";
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private final Panel p;
@@ -32,6 +32,11 @@ final class Picture {
     private final File cacheFile;
     private List<String> styles = new ArrayList<>();
     private String current;
+    // The activity behind Philips' quick menu, asked from the TV (null = not asked yet, "" = none).
+    // Android TV 11: org.droidtv.settings/...QuickSettingsActivity; Philips Google TV has no
+    // org.droidtv.settings, so the old hard-coded name made "Read styles" fail there.
+    private String quickMenu;
+    private String lastError;
 
     Picture(Panel p, TvUi ui, File dir) {
         this.p = p;
@@ -56,8 +61,15 @@ final class Picture {
             } catch (Exception ignored) {
             }
         }
+        String menu = null;
+        try {
+            menu = quickMenu();
+        } catch (Exception ignored) {
+            // needs ADB: unknown for now
+        }
         return new JSONObject()
                 .put("supported", true)
+                .put("menu", menu == null ? JSONObject.NULL : menu.length() > 0)
                 .put("styles", new JSONArray(styles))
                 .put("current", current == null ? JSONObject.NULL : current)
                 .put("brightness", b == null ? JSONObject.NULL : b)
@@ -138,13 +150,44 @@ final class Picture {
         }
     }
 
+    /** The quick-menu activity of this TV, "" when it has none. Cached once found (needs ADB). */
+    synchronized String quickMenu() throws Exception {
+        if (quickMenu == null) quickMenu = ui.resolve(QUICK_ACTION);
+        return quickMenu;
+    }
+
+    private boolean menuInFront() throws Exception {
+        String menu = quickMenu();
+        return menu.length() > 0 && TvUi.normalize(ui.foregroundActivity()).equals(menu);
+    }
+
+    /** For the diagnostics: which menu this TV has and the last failure. */
+    synchronized JSONObject diagnostics() throws Exception {
+        String menu = null;
+        try {
+            menu = quickMenu();
+        } catch (Exception ignored) {
+            // needs ADB
+        }
+        return new JSONObject().put("quick_menu", menu == null ? JSONObject.NULL : menu)
+                .put("last_error", lastError == null ? JSONObject.NULL : lastError);
+    }
+
     /** Opens Quick menu > Picture style and returns its rows. */
     private List<TvUi.Node> openStyles() throws Exception {
-        p.adb.shell("am start -a org.droidtv.action.EXPERIENCE_MENU");
+        if (quickMenu().isEmpty()) {
+            lastError = "no activity for " + QUICK_ACTION;
+            throw new IOException("pic.menu_missing");
+        }
+        p.adb.shell("am start -a " + QUICK_ACTION);
         long end = SystemClock.uptimeMillis() + 4000;
-        while (!ui.foregroundActivity().contains(QUICK)) {
+        while (!menuInFront()) {
             // Never send keys before the menu is on screen; they would go to the app being watched.
-            if (SystemClock.uptimeMillis() > end) throw new IOException("pic.menu_failed");
+            if (SystemClock.uptimeMillis() > end) {
+                lastError = "quick menu not in front after 4 s; in front: " + TvUi.normalize(ui.foregroundActivity());
+                p.log("picture: " + lastError);
+                throw new IOException("pic.menu_failed");
+            }
             SystemClock.sleep(250);
         }
         SystemClock.sleep(500);
@@ -159,7 +202,12 @@ final class Picture {
         // Make sure this really is the picture-style list (and not e.g. sound style) before touching it.
         boolean header = false;
         for (TvUi.Node n : all) if (!n.checkable && isPictureHeader(n.text)) header = true;
-        if (!header || items.size() < 2 || checked != 1) throw new IOException("pic.list_failed");
+        if (!header || items.size() < 2 || checked != 1) {
+            lastError = "style list not recognised: header=" + header + " rows=" + items.size() + " checked=" + checked;
+            p.log("picture: " + lastError);
+            throw new IOException("pic.list_failed");
+        }
+        lastError = null;
         return items;
     }
 
@@ -189,7 +237,7 @@ final class Picture {
 
     /** BACK only while the quick menu is still in front; otherwise it could close the app being watched. */
     private void close() throws Exception {
-        for (int i = 0; i < 3 && ui.foregroundActivity().contains(QUICK); i++) {
+        for (int i = 0; i < 3 && menuInFront(); i++) {
             ui.key("KEYCODE_BACK");
             SystemClock.sleep(350);
         }

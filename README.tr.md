@@ -111,6 +111,11 @@ Kurmadan önce oku. Ayrıntılar: [SECURITY.md](SECURITY.md).
 - **Panel "Hata ayıklamaya izin ver'i onayla" diyor ama TV'de pencere yok:** TV pencerenin hâlâ açık olduğunu
   sanıyor. Bilgisayardan bir kez `adb tcpip 5555` çalıştır (TV'nin ADB'sini yeniden başlatır), sonra panelde
   *Tekrar kontrol et*'e bas.
+- **Philips: PIN çıkmıyor ya da Ambilight tepki vermiyor:** panel artık nedenini söylüyor (TV eşleştirmeyi
+  reddetti, JointSpace yanıt vermiyor ya da TV komutu yok saydı). *Görüntü › Philips tanı bilgisi*'ni aç,
+  metni kopyala ve [hata bildirimine](https://github.com/odinozlen/odin-tv-magic/issues) ekle: yalnızca TV
+  modelini, Android sürümünü ve JointSpace API'sinin bildirdiklerini içerir. Yeni Philips Google TV
+  yazılımları henüz test edilmedi.
 - **Uygulamalar "internet yok" diyor ama ağ çalışıyor:** TV'nin saati yanlış, TLS başarısız oluyor. Otomatik
   tarih ve saati aç (`adb shell settings put global auto_time 1`).
 - **Google TV yeniden başlayınca bağlantı kopuyor:** *Kablosuz hata ayıklama*'da *Bu ağda her zaman izin ver*'in
@@ -167,6 +172,8 @@ Her sürüm uçtan uca bir testten geçer. Test şu adımları kapsar:
 - **HDMI çubuklar ve soundbar'lar:** Android'in ses seviyesi sabitse (Chromecast tipi çubuklar, HDMI ARC üzerinden ses) panel − / + / sessiz düğmelerini gösterir. Bunlar kumandanın ses tuşlarını TV'ye ya da soundbar'a iletir.
 - **Port:** Panel 8080'i kullanır. Başka bir uygulama (Kodi, medya sunucusu…) onu tutuyorsa bir sonraki boş porta geçer ve yeni adresi TV'de gösterir.
 - **Philips'e özel** özellikler (Ambilight, görüntü tarzı, logger bekçisi) yalnızca Philips TV'lerde görünür.
+  Ambilight ve görüntü için bir kez eşleştirme gerekir: Ambilight kartında *TV'de PIN göster*. TV Ambilight
+  bildirmiyorsa kart gizlenir; TV'nin JointSpace arayüzü yanıt vermiyorsa panel bunu söyler.
 
 ## Yapan
 

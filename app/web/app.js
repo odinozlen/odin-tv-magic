@@ -32,7 +32,7 @@ const I18N = {
     "ob.skipall": "Skip", "ob.next": "Continue", "ob.later": "Not now", "ob.done": "Start",
     "ob.tv.title": "Unlock everything", "ob.tv.text": "Odin TV Magic on the TV shows the setup step by step: developer mode, USB debugging, then <b>Allow</b>. About a minute with the remote. You can also do it later.",
     "ob.tv.ok": "Connected to the TV", "ob.tv.check": "Check again",
-    "ob.ph.title": "Philips features", "ob.ph.text": "Instant remote and volume, Ambilight, picture style and brightness. The TV shows a PIN.",
+    "ob.ph.title": "Ambilight and Philips features", "ob.ph.text": "Ambilight, picture style, brightness and an instant remote need a one-time pairing. Tap the button: the TV shows a 4-digit PIN, type it here.",
     "ob.home.title": "Add to Home Screen",
     "ob.apps.title": "Your apps", "ob.apps.text": "Tap the apps you want on the home tab.",
     "ob.done.title": "All set", "ob.done.text": "Remote, apps and settings are one tap away.",
@@ -64,13 +64,19 @@ const I18N = {
     apps: "Apps", sources: "Sources", tools: "Tools", keyboard: "Keyboard", screen: "Screen", sleep: "Sleep", restart: "Restart",
     "no.apps": "No apps selected. Pick some in Settings.",
     volume: "Volume", muted: "Muted", "pad.hint": "Tap, swipe or hold", back: "Back", home: "Home", menu: "Menu", type: "Type with keyboard",
-    "philips.title": "Connect Philips features",
-    "philips.intro": "Instant remote and volume, Ambilight, picture style and brightness. Pair once: the TV shows a PIN.",
+    "philips.title": "Pair once for Ambilight",
+    "philips.intro": "Ambilight, picture style, brightness and an instant remote need a one-time pairing with the TV: tap the button, the TV shows a 4-digit PIN, type it here.",
+    "philips.unreachable": "This TV's Philips interface (JointSpace) does not answer, so Ambilight and picture can only be set with the TV's remote.",
+    "amb.need_pair": "Ambilight, picture style and brightness work after a one-time pairing with the TV: tap the button, the TV shows a 4-digit PIN, type it on the phone.",
+    "amb.pair_first": "Pair first: tap \"Show PIN on TV\"",
+    "diag.open": "Philips diagnostics", "diag.hint": "What the TV reports about its Philips interface. No addresses, names or keys. Copy it into your bug report.",
+    "diag.copy": "Copy", "diag.copied": "Copied", "diag.select": "Selected: copy it with your phone's menu",
     "philips.start": "Show PIN on TV", "philips.enter": "Enter the PIN shown on the TV.", "philips.connect": "Connect",
     "pic.style": "Picture style", brightness: "Brightness", "b.night": "Night", "b.evening": "Evening", "b.day": "Day", "b.max": "Max",
     on: "On", off: "Off", "amb.video": "Video", "amb.music": "Music",
     "pic.applying": "Applying %s… the TV shows its quick menu for a few seconds",
     "pic.read": "Read styles from TV", "pic.none": "List not read yet",
+    "pic.no_menu": "On this TV the picture style is changed with the TV's remote; brightness works here.",
     "scene": "Cinema", "scene.desc": "%s + Ambilight", "scene.busy": "Setting up cinema mode…", "scene.ok": "Cinema mode ready",
     lang: "Language", favs: "Apps on the home tab", "styles.show": "Picture styles to show",
     party: "Party mode", "party.name": "Surprise",
@@ -125,7 +131,7 @@ const I18N = {
     "ob.skipall": "Geç", "ob.next": "Devam", "ob.later": "Şimdi değil", "ob.done": "Başla",
     "ob.tv.title": "Her şeyin kilidini aç", "ob.tv.text": "TV'deki Odin TV Magic kurulumu adım adım gösterir: geliştirici modu, USB hata ayıklama, sonra <b>İzin ver</b>. Kumandayla yaklaşık bir dakika. İstersen sonra da yapabilirsin.",
     "ob.tv.ok": "TV'ye bağlanıldı", "ob.tv.check": "Tekrar kontrol et",
-    "ob.ph.title": "Philips özellikleri", "ob.ph.text": "Anında tepki veren kumanda ve ses, Ambilight, görüntü tarzı ve parlaklık. TV bir PIN gösterir.",
+    "ob.ph.title": "Ambilight ve Philips özellikleri", "ob.ph.text": "Ambilight, görüntü tarzı, parlaklık ve anında tepki veren kumanda için bir kez eşleşmen gerekir. Düğmeye bas: TV 4 haneli bir PIN gösterir, onu buraya yaz.",
     "ob.home.title": "Ana ekrana ekle",
     "ob.apps.title": "Uygulamaların", "ob.apps.text": "Ana sekmede görmek istediğin uygulamalara dokun.",
     "ob.done.title": "Hazır", "ob.done.text": "Kumanda, uygulamalar ve ayarlar tek dokunuş uzağında.",
@@ -157,13 +163,19 @@ const I18N = {
     apps: "Uygulamalar", sources: "Kaynaklar", tools: "Araçlar", keyboard: "Klavye", screen: "Ekran", sleep: "Uyku", restart: "Yeniden başlat",
     "no.apps": "Uygulama seçilmedi. Ayarlar'dan seç.",
     volume: "Ses", muted: "Sessiz", "pad.hint": "Dokun, kaydır ya da basılı tut", back: "Geri", home: "Ana", menu: "Menü", type: "Klavye ile yaz",
-    "philips.title": "Philips özelliklerini bağla",
-    "philips.intro": "Anında tepki veren kumanda ve ses, Ambilight, görüntü tarzı ve parlaklık. Bir kez eşleştir: TV bir PIN gösterir.",
+    "philips.title": "Ambilight için bir kez eşleştir",
+    "philips.intro": "Ambilight, görüntü tarzı, parlaklık ve anında tepki veren kumanda için TV ile bir kez eşleşmen gerekir: düğmeye bas, TV 4 haneli bir PIN gösterir, onu buraya yaz.",
+    "philips.unreachable": "Bu TV'nin Philips arayüzü (JointSpace) yanıt vermiyor; Ambilight ve görüntü yalnızca TV kumandasıyla ayarlanabilir.",
+    "amb.need_pair": "Ambilight, görüntü tarzı ve parlaklık TV ile bir kez eşleştikten sonra çalışır: düğmeye bas, TV 4 haneli bir PIN gösterir, onu telefona yaz.",
+    "amb.pair_first": "Önce eşleştir: \"TV'de PIN göster\"e bas",
+    "diag.open": "Philips tanı bilgisi", "diag.hint": "TV'nin Philips arayüzü hakkında bildirdikleri. Adres, isim ya da anahtar içermez. Hata bildirimine kopyala.",
+    "diag.copy": "Kopyala", "diag.copied": "Kopyalandı", "diag.select": "Seçildi: telefonun menüsüyle kopyala",
     "philips.start": "TV'de PIN göster", "philips.enter": "TV ekranındaki PIN'i gir.", "philips.connect": "Bağla",
     "pic.style": "Görüntü tarzı", brightness: "Parlaklık", "b.night": "Gece", "b.evening": "Akşam", "b.day": "Gündüz", "b.max": "Maks",
     on: "Açık", off: "Kapalı", "amb.video": "Video", "amb.music": "Müzik",
     "pic.applying": "%s uygulanıyor… TV'de hızlı menü birkaç saniye görünecek",
     "pic.read": "Tarzları TV'den oku", "pic.none": "Liste henüz okunmadı",
+    "pic.no_menu": "Bu TV'de görüntü tarzı TV kumandasıyla değiştirilir; parlaklık buradan çalışır.",
     "scene": "Sinema", "scene.desc": "%s + Ambilight", "scene.busy": "Sinema modu hazırlanıyor…", "scene.ok": "Sinema modu hazır",
     lang: "Dil", favs: "Ana sekmedeki uygulamalar", "styles.show": "Gösterilecek görüntü tarzları",
     party: "Sürpriz modu", "party.name": "Sürpriz",
@@ -468,12 +480,22 @@ function renderStatus(s) {
   const hasLogger = typeof pi.fl_threads === "number";
   $("flStat").hidden = !hasLogger;
   if (hasLogger) $("fl").textContent = t("fl.val", pi.fl_threads);
-  $("philipsHomeCard").hidden = !(s.philips && !pi.paired);
+  const jsDown = pi.reachable === false;
+  $("philipsHomeCard").hidden = !(s.philips && !pi.paired && !jsDown);
   // Philips tab
   $("tabPicture").hidden = !s.philips;
-  $("philipsPairCard").hidden = !s.philips || !!pi.paired;
+  // Ambilight shows before pairing too, locked, with the pairing button in it: people did not
+  // connect a "Philips features" card with Ambilight. Hidden only when the TV says it has none.
+  const ambShown = !!s.philips && !jsDown && pi.has_ambilight !== false;
+  $("philipsPairCard").hidden = !s.philips || !!pi.paired || ambShown;
+  $("philipsNoJs").hidden = !jsDown;
+  $("philipsPair").hidden = jsDown;
   $("picCard").hidden = !pi.paired;
-  $("ambTitle").hidden = $("ambCard").hidden = !pi.paired;
+  $("ambTitle").hidden = $("ambCard").hidden = !ambShown;
+  $("ambLock").hidden = !!pi.paired;
+  $("ambSeg").classList.toggle("needpair", !pi.paired);
+  $("ambSws").classList.toggle("needpair", !pi.paired);
+  $("philipsDiag").hidden = !s.philips;
   $("ambOn").classList.toggle("on", pi.ambilight === "On");
   $("ambOff").classList.toggle("on", pi.ambilight === "Off");
   $("styleSettings").hidden = !s.philips;
@@ -953,7 +975,10 @@ function renderPicture(p) {
   $("picBadge").textContent = dv ? "DOLBY VISION" : "HDR";
   $("picBadge").className = "badge" + (dv ? " dv" : "");
   $("picNow").textContent = "";
-  if (!all.length) {
+  if (p.menu === false) {
+    $("picNow").append("—");
+    $("picNow").appendChild(el("small", "", t("pic.no_menu")));
+  } else if (!all.length) {
     $("picNow").append("—");
     $("picNow").appendChild(el("small", "", t("pic.none")));
     const c = el("button", "chip", t("pic.read"));
@@ -1045,13 +1070,34 @@ $("philipsPinDone").addEventListener("click", e => busy(e.currentTarget, async (
   await refresh();
   loadPicture();
 }));
+$("ambPair").addEventListener("click", () => $("philipsPair").click());
+document.querySelectorAll("[data-amb], [data-rgb]").forEach(b => b.addEventListener("click", e => {
+  if (!b.parentElement.classList.contains("needpair")) return;
+  e.stopImmediatePropagation();
+  toast(t("amb.pair_first"));
+  $("ambPair").focus();
+}));
+$("philipsDiag").addEventListener("click", e => busy(e.currentTarget, async () => {
+  const d = await api("/api/philips/diag");
+  delete d.ok;
+  $("diagText").value = JSON.stringify(d, null, 2);
+  showSheet("diagSheet");
+}));
+$("diagCopy").addEventListener("click", async () => {
+  const ta = $("diagText");
+  try { await navigator.clipboard.writeText(ta.value); toast(t("diag.copied")); return; } catch (e) {}
+  ta.focus(); ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  toast(t(ok ? "diag.copied" : "diag.select"));
+});
 document.querySelectorAll("[data-amb]").forEach(b => b.addEventListener("click", () => busy(b, async () => {
   toast((await api("/api/ambilight/" + b.dataset.amb, "POST")).msg);
   setTimeout(refresh, 600);
 })));
 document.querySelectorAll("[data-rgb]").forEach(b => b.addEventListener("click", () => busy(b, async () => {
   const [r, g, bl] = b.dataset.rgb.split(",").map(Number);
-  await api("/api/ambilight/color", "POST", { r, g, b: bl });
+  toast((await api("/api/ambilight/color", "POST", { r, g, b: bl })).msg);
 })));
 
 /* ---------------- keyboard ---------------- */

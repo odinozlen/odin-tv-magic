@@ -103,6 +103,11 @@ Verify: the panel's Home tab shows RAM and uptime, nothing is dimmed and the set
 
 - `org.droidtv.eum` and `org.droidtv.fastip` look like help/promo apps but the Sources drawer depends on them.
 - `org.droidtv.aurora` disabled → xtv retry loop.
+- Philips Google TV (Android 12+) differs from Android TV 11: Ambilight / Hue is `org.droidtv.ambisvc`
+  (instead of `org.droidtv.ambihuecommon` / `alhuewizard`) and settings are `com.tpv.cul.settings`. Do not
+  disable either. JointSpace (`org.droidtv.xtv`, ports 1925/1926) exists on both. No tested debloat list yet.
+  The quick menu used for picture styles is `org.droidtv.settings/.quicksettings.QuickSettingsActivity` on
+  Android TV 11; the panel resolves `org.droidtv.action.EXPERIENCE_MENU` instead of assuming it.
 - `org.droidtv.tv.frameworklogger` leaks threads → Netflix freezes at 86% after days of uptime. Do NOT
   disable it (it comes back and spams errors); the panel restarts it automatically.
   See [docs/philips-netflix-freeze.md](docs/philips-netflix-freeze.md).

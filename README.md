@@ -125,6 +125,11 @@ Read this before installing. [SECURITY.md](SECURITY.md) has the details.
 - **Panel says "Approve Allow debugging?" but nothing is on the TV, even after the steps above:** the TV
   thinks a prompt is still open. Run `adb tcpip 5555` once from a computer (restarts the TV's ADB), then
   press *Check again* in the panel.
+- **Philips: no PIN appears, or Ambilight does not react:** the panel now says why (the TV refused
+  pairing, JointSpace does not answer, or the TV ignored the command). Open *Picture › Philips diagnostics*,
+  copy the text and add it to your [issue](https://github.com/odinozlen/odin-tv-magic/issues): it lists
+  only the TV model, Android version and what its JointSpace API reports. Newer Philips Google TV
+  firmware is not tested yet.
 - **Apps say "no internet" but the network works:** the TV clock is wrong and TLS fails. Turn on automatic
   date & time (`adb shell settings put global auto_time 1`).
 - **Google TV loses the connection after a reboot:** in *Wireless debugging* make sure *Always allow on this
@@ -187,7 +192,9 @@ Notes:
   soundbar.
 - **Port**: the panel uses 8080; if another app (Kodi, a media server…) holds it, it moves to the
   next free port and shows the new address on the TV.
-- **Philips extras** (Ambilight, picture style, logger watchdog) appear only on Philips sets.
+- **Philips extras** (Ambilight, picture style, logger watchdog) appear only on Philips sets. Ambilight
+  and picture need a one-time pairing: *Show PIN on TV* in the Ambilight card. Ambilight is hidden if the
+  TV reports none, and the panel says so if the TV's JointSpace interface does not answer.
 
 ## Credits
 

@@ -97,6 +97,13 @@ final class Strings {
         put("philips.paired", "Philips features connected", "Philips özellikleri bağlandı");
         put("philips.pin_wrong", "PIN not accepted", "PIN kabul edilmedi");
         put("philips.unsupported", "Only available on Philips Android TVs", "Yalnızca Philips Android TV'lerde var");
+        put("philips.unreachable", "This TV's Philips interface (JointSpace) does not answer, so Ambilight and picture can only be set with the TV's remote.",
+                "Bu TV'nin Philips arayüzü (JointSpace) yanıt vermiyor; Ambilight ve görüntü yalnızca TV kumandasıyla ayarlanabilir.");
+        put("philips.pair_refused", "The TV refused pairing (%s). Tap \"Show PIN on TV\" again.",
+                "TV eşleştirmeyi reddetti (%s). \"TV'de PIN göster\"e tekrar bas.");
+        put("amb.unsupported", "This TV reports no Ambilight", "Bu TV Ambilight bildirmiyor");
+        put("amb.no_effect", "The TV accepted the command but Ambilight did not change. Send the diagnostics (Picture tab) with your report.",
+                "TV komutu aldı ama Ambilight değişmedi. Bildirirken tanı bilgisini de gönder (Görüntü sekmesi).");
         put("amb.on", "Ambilight on", "Ambilight açık");
         put("amb.off", "Ambilight off", "Ambilight kapalı");
         put("amb.video", "Ambilight follows video", "Ambilight videoyu takip ediyor");
@@ -107,6 +114,8 @@ final class Strings {
                 "Şu anki içerikte \"%s\" yok, liste güncellendi");
         put("pic.style_failed", "Could not change the picture style", "Görüntü tarzı değiştirilemedi");
         put("pic.menu_failed", "Could not open the quick menu", "Hızlı menü açılamadı");
+        put("pic.menu_missing", "This TV has no quick menu the panel can open, so picture styles are changed with the TV's remote. Brightness works.",
+                "Bu TV'de panelin açabileceği bir hızlı menü yok; görüntü tarzı TV kumandasıyla değiştirilir. Parlaklık çalışır.");
         put("pic.list_failed", "Could not read the picture styles", "Görüntü tarzları okunamadı");
         put("pic.brightness", "Brightness %d", "Parlaklık %d");
         put("pic.brightness_denied", "The TV did not accept the brightness change (now %d)",

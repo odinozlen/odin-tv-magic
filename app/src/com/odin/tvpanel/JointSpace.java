@@ -78,6 +78,12 @@ final class JointSpace {
     private String pendingKey;
     private long pendingTimestamp;
 
+    // Unauthenticated GET /system, cached: which API version and features this TV reports.
+    private JSONObject system;
+    private boolean reachable;
+    private long systemAt;
+    private String lastError;  // last pairing / Ambilight problem, for the diagnostics
+
     JointSpace(File dir) {
         credFile = new File(dir, "jointspace.json");
         try {
@@ -91,6 +97,67 @@ final class JointSpace {
 
     synchronized boolean paired() {
         return user != null;
+    }
+
+    /**
+     * The TV's own description (api_version, featuring…), cached for a minute (15 s after a failure).
+     * Needs no pairing. null when JointSpace does not answer.
+     */
+    synchronized JSONObject system(boolean fresh) {
+        long now = android.os.SystemClock.elapsedRealtime();
+        if (!fresh && systemAt != 0 && now - systemAt < (reachable ? 60000 : 15000)) return system;
+        systemAt = now;
+        try {
+            Resp r = request("GET", "system", null, null, null);
+            reachable = true;
+            JSONObject o = r.code < 300 ? new JSONObject(r.body) : null;
+            if (o != null) system = o;
+            else lastError = "system: HTTP " + r.code;
+        } catch (IOException | JSONException e) {
+            reachable = false;
+            system = null;
+        }
+        return system;
+    }
+
+    synchronized boolean reachable() {
+        return reachable;
+    }
+
+    /**
+     * Ambilight according to the TV: TRUE / FALSE from featuring.jsonfeatures.ambilight,
+     * null when the TV does not say (older firmware lists no features).
+     */
+    Boolean ambilightFeature() {
+        JSONObject s = system(false);
+        if (s == null) return null;
+        JSONObject jf = s.optJSONObject("featuring") == null ? null : s.optJSONObject("featuring").optJSONObject("jsonfeatures");
+        if (jf == null || !jf.has("ambilight")) return jf == null ? null : Boolean.FALSE;
+        JSONArray a = jf.optJSONArray("ambilight");
+        if (a == null) return null;
+        for (int i = 0; i < a.length(); i++) if ("Ambilight".equalsIgnoreCase(a.optString(i))) return Boolean.TRUE;
+        return Boolean.FALSE;
+    }
+
+    synchronized void noteError(String e) {
+        lastError = e;
+    }
+
+    /** What the TV reports, without anything personal (no ids, keys or addresses). */
+    JSONObject diagnostics() throws JSONException {
+        JSONObject s = system(true);
+        JSONObject d = new JSONObject().put("reachable", reachable()).put("paired", paired());
+        if (s != null) {
+            JSONObject v = s.optJSONObject("api_version");
+            if (v != null) d.put("api", v.optInt("Major") + "." + v.optInt("Minor") + "." + v.optInt("Patch"));
+            d.put("os_type", s.optString("os_type", null));
+            JSONObject f = s.optJSONObject("featuring");
+            if (f != null) d.put("featuring", f);
+        }
+        synchronized (this) {
+            d.put("last_error", lastError == null ? JSONObject.NULL : lastError);
+        }
+        return d;
     }
 
     /** Makes the TV show a PIN. */
@@ -109,16 +176,27 @@ final class JointSpace {
                 .put("app_name", "Odin TV Magic");
 
         JSONObject access = new JSONObject().put("scope", new JSONArray().put("read").put("write").put("control"));
-        try {
-            JSONObject system = new JSONObject(request("GET", "system", null, null, null).body);
-            if (system.has("featuring")) access.put("featuring", system.get("featuring"));
-        } catch (IOException | JSONException ignored) {
-            // "featuring" is optional
+        JSONObject sys = system(true);
+        if (sys == null && !reachable) {
+            lastError = "pair/request: no answer on 127.0.0.1:1926";
+            throw new IOException("philips.unreachable");
         }
+        if (sys != null && sys.has("featuring")) access.put("featuring", sys.get("featuring"));
 
-        Resp r = request("POST", "pair/request", new JSONObject().put("access", access).put("device", device), null, null);
+        Resp r;
+        try {
+            r = request("POST", "pair/request", new JSONObject().put("access", access).put("device", device), null, null);
+        } catch (IOException e) {
+            lastError = "pair/request: " + e.getClass().getSimpleName();
+            throw new IOException("philips.unreachable");
+        }
+        String err = errorId(r);
+        if (!"SUCCESS".equals(err)) {
+            lastError = "pair/request: " + err;
+            throw new PairError("philips.pair_refused", err);
+        }
         JSONObject res = new JSONObject(r.body);
-        if (!"SUCCESS".equals(res.optString("error_id"))) throw new IOException("pair.failed");
+        lastError = null;
         pendingDevice = device;
         pendingKey = res.getString("auth_key");
         pendingTimestamp = res.getLong("timestamp");
@@ -133,13 +211,41 @@ final class JointSpace {
                 .put("auth_signature", signature(String.valueOf(pendingTimestamp), pin))
                 .put("pin", pin);
         Resp r = request("POST", "pair/grant", new JSONObject().put("auth", auth).put("device", pendingDevice), id, pendingKey);
-        JSONObject res = new JSONObject(r.body);
-        if (!"SUCCESS".equals(res.optString("error_id"))) throw new IOException("philips.pin_wrong");
+        String err = errorId(r);
+        if (!"SUCCESS".equals(err)) {
+            lastError = "pair/grant: " + err;
+            // INVALID_PIN is a typo; anything else (TIMEOUT, CONCURRENT_PAIRING…) needs a new PIN.
+            if ("INVALID_PIN".equals(err)) throw new IOException("philips.pin_wrong");
+            pendingDevice = null;
+            throw new PairError("philips.pair_refused", err);
+        }
+        lastError = null;
 
         user = id;
         password = pendingKey;
         pendingDevice = null;
         writeAll(credFile, new JSONObject().put("id", user).put("auth_key", password).toString().getBytes(UTF8));
+    }
+
+    /** A pairing step the TV refused; carries the TV's error_id for the message. */
+    static final class PairError extends IOException {
+        final String detail;
+
+        PairError(String key, String detail) {
+            super(key);
+            this.detail = detail;
+        }
+    }
+
+    /** error_id of a pairing answer; "HTTP nnn" when the answer is not JSON. */
+    private static String errorId(Resp r) {
+        try {
+            String e = new JSONObject(r.body).optString("error_id", "");
+            if (e.length() > 0) return e.length() > 40 ? e.substring(0, 40) : e;
+        } catch (JSONException ignored) {
+            // not JSON
+        }
+        return "HTTP " + r.code;
     }
 
     static String signature(String timestamp, String pin) throws GeneralSecurityException {
