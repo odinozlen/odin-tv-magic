@@ -366,6 +366,12 @@
     background: radial-gradient(120% 60% at 50% 0%, rgba(91,140,255,.18), transparent 60%), var(--bg); }
   #pairScreen .box { width: 100%; max-width: 360px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
   #pairScreen h3 { font-size: 26px; font-weight: 800; }
+  #deskScreen { position: fixed; inset: 0; z-index: 45; display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: radial-gradient(120% 60% at 50% 0%, rgba(91,140,255,.18), transparent 60%), var(--bg); }
+  #deskScreen .box { width: 100%; max-width: 440px; text-align: center; display: flex; flex-direction: column; gap: 14px; }
+  #deskScreen h3 { font-size: 26px; font-weight: 800; }
+  #deskScreen ol { text-align: left; margin: 0 auto; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
+  .a2hs-steps { text-align: left; margin: 4px auto 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; max-width: 320px; }
   #pairScreen .err { color: var(--bad); min-height: 20px; font-size: 14px; }
   .lang { position: absolute; top: calc(env(safe-area-inset-top) + 14px); right: 16px; width: 104px; }
   /* small phones (iPhone SE 1st gen, 320–350px) */
@@ -728,8 +734,9 @@
 <div class="sheet" id="a2hsSheet">
   <div class="grab"></div>
   <div class="a2hs-icon"><img src="/icon-magic.png" alt=""></div>
-  <h3 style="text-align:center" data-i18n="a2hs.title">Add to Home Screen</h3>
-  <p id="a2hsText" style="text-align:center"></p>
+  <h3 style="text-align:center" data-i18n="a2hs.title">Add the remote to your phone</h3>
+  <p style="text-align:center" data-i18n="a2hs.why">Next time it opens with one tap, no QR code needed.</p>
+  <ol class="a2hs-steps" id="a2hsText"></ol>
   <div class="actions one"><button class="primary" id="a2hsOk" data-i18n="a2hs.ok">Got it</button></div>
 </div>
 
@@ -749,6 +756,21 @@
     <input class="field code" id="pairCode" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000">
     <button class="primary" id="pairGo" data-i18n="pair.go">Pair</button>
     <div class="err" id="pairErr"></div>
+  </div>
+</div>
+
+<div id="deskScreen" hidden>
+  <div class="seg lang" id="langSeg3"><button data-lang="en">EN</button><button data-lang="tr">TR</button></div>
+  <div class="box">
+    <div class="a2hs-icon"><img src="/icon-magic.png" alt=""></div>
+    <h3 data-i18n="desk.title">This panel is made for your phone</h3>
+    <div class="hint" data-i18n-html="desk.text"></div>
+    <ol>
+      <li data-i18n-html="desk.s1"></li>
+      <li data-i18n-html="desk.s2"></li>
+      <li data-i18n-html="desk.s3"></li>
+    </ol>
+    <button class="link" id="deskGo" data-i18n="desk.anyway">Continue on this computer anyway</button>
   </div>
 </div>
 

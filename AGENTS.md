@@ -53,7 +53,24 @@ address (TV: Settings › Network › status). Then pick one way:
   platform-tools zip). Building from source (`scripts/setup-toolchain.sh` + `scripts/build.sh`) downloads
   a JDK and the Android SDK and asks the person to accept Google's SDK license; do it only if they want to.
 
+### When the app is installed: hand over to the phone (do not skip)
+
+People who set this up through an assistant often think they continue on the computer. They do not: from
+here on everything happens on the TV (with the remote) and on the **phone**. Say this, in their language,
+in these words or very close:
+
+> "Odin TV Magic is installed. From now on you use your TV **from your phone**, not from this computer and
+> not from this chat. Open *Odin TV Magic* on the TV and scan the QR code on the TV with your **phone's
+> camera**. Then add the page to your phone's home screen so it opens like an app."
+
+- Never give the panel address (`http://<tv-ip>:8080`) as a link to open on the computer. If you must
+  write it, say "open this in your phone's browser".
+- Opened on a computer, the panel shows "This panel is made for your phone"; if they report that, repeat
+  the message above.
+
 ## Step 2: setup on the TV, then the phone
+
+Everything from here happens on the TV and the phone.
 
 The person does this with the remote and the phone; you explain. You cannot press the TV's buttons for
 them, and must not accept prompts on their behalf.
@@ -66,8 +83,9 @@ them, and must not accept prompts on their behalf.
    If the TV has no network-debugging switch (some Google TV / Android 12+): *Wireless debugging*,
    *Pair device with pairing code*, and the code goes into the panel: *Settings › TV connection*. Tell
    them to tick *Always allow on this network*.
-2. **Scan the QR code with the phone camera** (works before step 1 is done; the panel then runs in
-   basic mode and dims what needs the setup). On iPhone: *Share › Add to Home Screen*.
+2. **Scan the QR code on the TV with the phone camera** (works before step 1 is done; the panel then runs
+   in basic mode and dims what needs the setup). Then add it to the phone's home screen: iPhone Safari
+   *Share › Add to Home Screen*, Android Chrome *⋮ › Add to Home screen*.
 3. **Philips:** in the panel, *Show PIN on TV* › enter the PIN (Ambilight, picture, fast remote).
 
 Verify: the panel's Home tab shows RAM and uptime, nothing is dimmed and the setup card is gone.

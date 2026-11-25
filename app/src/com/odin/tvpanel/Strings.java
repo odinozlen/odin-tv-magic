@@ -155,8 +155,10 @@ final class Strings {
 
         // TV screen (MainActivity)
         put("tv.title", "Odin TV Magic", "Odin TV Magic");
-        put("tv.scan", "Scan with your phone camera", "Telefon kamerasıyla okut");
-        put("tv.or_open", "or open %s and enter the code", "ya da %s adresini açıp kodu gir");
+        put("tv.lead", "Control this TV from your phone", "Bu TV'yi telefonundan yöneteceksin");
+        put("tv.scan", "Scan the QR code with your phone camera: the remote, apps and settings open on the phone.",
+                "Karekodu telefonunun kamerasıyla okut: kumanda, uygulamalar ve ayarlar telefonunda açılır.");
+        put("tv.or_open", "or open %s in the phone's browser and enter the code", "ya da telefonunun tarayıcısında %s adresini açıp kodu gir");
         put("tv.code", "Pairing code", "Eşleştirme kodu");
         put("tv.code_valid", "valid while this screen is open", "bu ekran açıkken geçerli");
         put("tv.adb", "ADB: %s", "ADB: %s");
@@ -175,7 +177,8 @@ final class Strings {
         put("tv.starting", "Starting…", "Başlatılıyor…");
         put("vol.needs_setup", "This TV passes the volume to the TV/soundbar; finish the setup on the TV (open Odin TV Magic) to control it.",
                 "Bu cihaz sesi TV'ye/ses sistemine iletiyor; kontrol etmek için TV'deki kurulumu tamamla (Odin TV Magic'i aç).");
-        put("tv.pair_short", "Pair your phone: scan the QR code, or open %s", "Telefonu eşle: karekodu okut ya da %s adresini aç");
+        put("tv.pair_short", "Pair your phone: scan the QR code with the phone camera, or open %s in the phone's browser",
+                "Telefonu eşle: karekodu telefonunun kamerasıyla okut ya da telefonunun tarayıcısında %s adresini aç");
         put("tv.basic_now", "You can pair your phone already (volume and play/pause work right away). This setup unlocks the rest.",
                 "Telefonu şimdiden eşleyebilirsin (ses ve oynat/duraklat hemen çalışır). Bu kurulum gerisini açar.");
         put("tv.basic_now.philips", "You can pair your phone already: after the Philips PIN in the panel, the remote, volume, apps and Ambilight work right away. This setup unlocks the rest.",

@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.2
+
+Make clear that the TV is used from the phone.
+
+- TV screen: a headline "Control this TV from your phone"; the address line says to open it in the
+  phone's browser.
+- Opened on a computer, the panel first says it is made for the phone and how to get there (scan the TV's
+  QR code with the phone camera); "Continue on this computer anyway" is still there. The QR code's
+  one-time code is not used on the computer, so it still works on the phone.
+- "Add to Home Screen" is now "Add the remote to your phone": it says why first (opens with one tap, no QR
+  code) and numbers the steps for Safari and Chrome.
+- AGENTS.md: assistants must hand over to the phone once the app is installed, with a fixed message, and
+  never give the panel address as a link to open on the computer.
+
 ## 1.0.1
 
 Philips: Ambilight and pairing explain themselves.

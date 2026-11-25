@@ -33,14 +33,21 @@ const I18N = {
     "ob.tv.title": "Unlock everything", "ob.tv.text": "Odin TV Magic on the TV shows the setup step by step: developer mode, USB debugging, then <b>Allow</b>. About a minute with the remote. You can also do it later.",
     "ob.tv.ok": "Connected to the TV", "ob.tv.check": "Check again",
     "ob.ph.title": "Ambilight and Philips features", "ob.ph.text": "Ambilight, picture style, brightness and an instant remote need a one-time pairing. Tap the button: the TV shows a 4-digit PIN, type it here.",
-    "ob.home.title": "Add to Home Screen",
+    "ob.home.title": "Add the remote to your phone", "ob.home.why": "Next time it opens with one tap, full screen like an app, no QR code needed.",
     "ob.apps.title": "Your apps", "ob.apps.text": "Tap the apps you want on the home tab.",
     "ob.done.title": "All set", "ob.done.text": "Remote, apps and settings are one tap away.",
     "src.home": "TV home", "src.home.sub": "Back to apps", "src.home.ok": "Home screen",
     "src.tv.sub": "Live TV", "clean.hint": "Closes apps waiting in the background. What is on screen keeps playing.",
     "src.back": "\"TV home\" takes you back",
-    "a2hs.title": "Add to Home Screen", "a2hs.ios": "Tap <b>Share</b> <span class=\"ios-share\"></span> at the bottom of Safari, then <b>Add to Home Screen</b>. The panel then opens full screen like an app.",
-    "a2hs.android": "Tap <b>⋮</b> in Chrome, then <b>Add to Home screen</b>. The panel then opens full screen like an app.",
+    "a2hs.title": "Add the remote to your phone", "a2hs.why": "Next time it opens with one tap, full screen like an app, no QR code needed.",
+    "a2hs.ios": "<li>In Safari, tap <b>Share</b> <span class=\"ios-share\"></span> (bottom of the screen).</li><li>Choose <b>Add to Home Screen</b>, then <b>Add</b>.</li>",
+    "a2hs.android": "<li>In Chrome, tap <b>⋮</b> (top right).</li><li>Choose <b>Add to Home screen</b> (or <b>Install app</b>), then <b>Add</b>.</li>",
+    "desk.title": "This panel is made for your phone",
+    "desk.text": "Odin TV Magic is a TV remote and settings panel <b>for your phone</b>. The computer was only needed to install it.",
+    "desk.s1": "Open <b>Odin TV Magic</b> on the TV.",
+    "desk.s2": "Scan the QR code on the TV with your <b>phone camera</b>.",
+    "desk.s3": "On the phone, add it to the home screen: it then opens like an app.",
+    "desk.anyway": "Continue on this computer anyway",
     "a2hs.ok": "Got it",
     "made.by": "Made by %s",
     "upgrade.title": "Upgrade your TV", "upgrade.sub": "Add features your TV doesn't have.",
@@ -92,7 +99,7 @@ const I18N = {
     "kb.hint": "Select a text field on the TV, type here and send. Handy for Netflix or YouTube search.", send: "Send",
     "shot.title": "Screenshot", "shot.hint": "Press and hold the image to save it. Protected content (e.g. Netflix) gives no image.", refresh: "Refresh",
     "pair.title": "Pair this phone",
-    "pair.how": "On the TV open <b>Odin TV Magic</b> and scan the QR code with your camera, or enter the 6-digit code shown there.",
+    "pair.how": "On the TV open <b>Odin TV Magic</b> and scan the QR code with your phone camera, or enter the 6-digit code shown there.",
     "pair.go": "Pair", "pair.short": "Enter the 6-digit code", "paired": "Paired",
     "confirm.reboot": "Restart the TV?", "confirm.sleep": "Put the TV to sleep? The panel is unavailable until the TV is on again.",
     "hours": "%s h %s min", "days": "%s d %s h", "mins": "%s min",
@@ -132,14 +139,21 @@ const I18N = {
     "ob.tv.title": "Her şeyin kilidini aç", "ob.tv.text": "TV'deki Odin TV Magic kurulumu adım adım gösterir: geliştirici modu, USB hata ayıklama, sonra <b>İzin ver</b>. Kumandayla yaklaşık bir dakika. İstersen sonra da yapabilirsin.",
     "ob.tv.ok": "TV'ye bağlanıldı", "ob.tv.check": "Tekrar kontrol et",
     "ob.ph.title": "Ambilight ve Philips özellikleri", "ob.ph.text": "Ambilight, görüntü tarzı, parlaklık ve anında tepki veren kumanda için bir kez eşleşmen gerekir. Düğmeye bas: TV 4 haneli bir PIN gösterir, onu buraya yaz.",
-    "ob.home.title": "Ana ekrana ekle",
+    "ob.home.title": "Kumandayı telefonuna ekle", "ob.home.why": "Bir dahaki sefere karekod okutmadan, tek dokunuşla ve uygulama gibi tam ekran açılır.",
     "ob.apps.title": "Uygulamaların", "ob.apps.text": "Ana sekmede görmek istediğin uygulamalara dokun.",
     "ob.done.title": "Hazır", "ob.done.text": "Kumanda, uygulamalar ve ayarlar tek dokunuş uzağında.",
     "src.home": "TV ana ekranı", "src.home.sub": "Uygulamalara dön", "src.home.ok": "Ana ekran",
     "src.tv.sub": "Canlı yayın", "clean.hint": "Arkada bekleyen uygulamaları kapatır. Ekranda açık olan oynamaya devam eder.",
     "src.back": "geri dönmek için \"TV ana ekranı\"",
-    "a2hs.title": "Ana ekrana ekle", "a2hs.ios": "Safari'nin altındaki <b>Paylaş</b> <span class=\"ios-share\"></span> düğmesine, sonra <b>Ana Ekrana Ekle</b>'ye dokun. Panel uygulama gibi tam ekran açılır.",
-    "a2hs.android": "Chrome'da <b>⋮</b> menüsüne, sonra <b>Ana ekrana ekle</b>'ye dokun. Panel uygulama gibi tam ekran açılır.",
+    "a2hs.title": "Kumandayı telefonuna ekle", "a2hs.why": "Bir dahaki sefere karekod okutmadan, tek dokunuşla ve uygulama gibi tam ekran açılır.",
+    "a2hs.ios": "<li>Safari'de <b>Paylaş</b> <span class=\"ios-share\"></span> düğmesine dokun (ekranın altında).</li><li><b>Ana Ekrana Ekle</b>'yi, sonra <b>Ekle</b>'yi seç.</li>",
+    "a2hs.android": "<li>Chrome'da <b>⋮</b> menüsüne dokun (sağ üstte).</li><li><b>Ana ekrana ekle</b>'yi (ya da <b>Uygulamayı yükle</b>), sonra <b>Ekle</b>'yi seç.</li>",
+    "desk.title": "Bu panel telefonun için yapıldı",
+    "desk.text": "Odin TV Magic, <b>telefonundan</b> kullanılan bir TV kumandası ve ayar panelidir. Bilgisayar yalnızca kurulum içindi.",
+    "desk.s1": "TV'de <b>Odin TV Magic</b>'i aç.",
+    "desk.s2": "TV'deki karekodu <b>telefonunun kamerasıyla</b> okut.",
+    "desk.s3": "Telefonda ana ekrana ekle: sonra uygulama gibi açılır.",
+    "desk.anyway": "Yine de bu bilgisayardan devam et",
     "a2hs.ok": "Tamam",
     "made.by": "Yapan: %s",
     "upgrade.title": "TV'ni yükselt", "upgrade.sub": "TV'nde olmayan özellikleri ekle.",
@@ -191,7 +205,7 @@ const I18N = {
     "kb.hint": "TV'de bir yazı kutusu seçiliyken yaz ve gönder. Netflix ya da YouTube aramasında işe yarar.", send: "Gönder",
     "shot.title": "Ekran görüntüsü", "shot.hint": "Kaydetmek için görsele basılı tut. Netflix gibi korumalı içerik açıkken TV görüntü vermez.", refresh: "Yenile",
     "pair.title": "Bu telefonu eşle",
-    "pair.how": "TV'de <b>Odin TV Magic</b>'i aç ve karekodu kamerayla okut ya da orada yazan 6 haneli kodu gir.",
+    "pair.how": "TV'de <b>Odin TV Magic</b>'i aç ve karekodu telefonunun kamerasıyla okut ya da orada yazan 6 haneli kodu gir.",
     "pair.go": "Eşle", "pair.short": "6 haneli kodu gir", "paired": "Eşleşti",
     "confirm.reboot": "TV yeniden başlatılsın mı?", "confirm.sleep": "TV uykuya alınsın mı? TV açılana kadar panel çalışmaz.",
     "hours": "%s sa %s dk", "days": "%s gün %s sa", "mins": "%s dk",
@@ -628,7 +642,7 @@ async function startOnboarding() {
   // Philips first: one PIN unlocks most features right away. The ADB setup happens on the TV.
   if (s.philips && !(s.philips_info && s.philips_info.paired)) obSteps.push("philips");
   if (!(s.adb && s.adb.ok)) obSteps.push("tv");
-  if (!standalone) obSteps.push("home");
+  if (!standalone && !isComputer()) obSteps.push("home");
   obSteps.push("apps", "done");
   obIndex = 0;
   if (!allApps.length) await loadApps();
@@ -676,7 +690,8 @@ function renderOb() {
     body.append(start, row);
   } else if (step === "home") {
     const ic = el("div", "a2hs-icon"); const img = el("img"); img.src = "/icon-magic.png"; ic.appendChild(img);
-    body.append(ic, h("ob.home.title"), p(/iPhone|iPad|iPod/.test(navigator.userAgent) ? "a2hs.ios" : "a2hs.android"));
+    const ol = el("ol", "a2hs-steps"); ol.innerHTML = t(/iPhone|iPad|iPod/.test(navigator.userAgent) ? "a2hs.ios" : "a2hs.android");  // our own constant strings
+    body.append(ic, h("ob.home.title"), p("ob.home.why"), ol);
   } else if (step === "apps") {
     body.append(h("ob.apps.title"), p("ob.apps.text"));
     const grid = el("div", "ob-apps");
@@ -1453,11 +1468,15 @@ function renderMadeBy() {
 }
 
 /* ---------------- add to home screen hint ---------------- */
+function isComputer() {
+  if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || navigator.maxTouchPoints > 1) return false;
+  return !window.matchMedia("(pointer: coarse)").matches;
+}
 function maybeA2hs() {
   const standalone = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
   let seen = false;
   try { seen = localStorage.getItem("odintv-a2hs") === "1"; } catch (e) {}
-  if (standalone || seen) return;
+  if (standalone || seen || isComputer()) return;
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
   $("a2hsText").innerHTML = t(ios ? "a2hs.ios" : "a2hs.android");
   showSheet("a2hsSheet");
@@ -1501,4 +1520,17 @@ function pairFromHash() {
   return true;
 }
 window.addEventListener("hashchange", pairFromHash);
-if (!pairFromHash()) start();
+// Opened on a computer (often from the link an AI assistant or the TV showed): point to the phone first.
+// The one-time code in #pair= is not used here, so the TV's QR code still works on the phone.
+function onDesktop() {
+  try { if (localStorage.getItem("odintv-desktop") === "1") return false; } catch (e) {}
+  return isComputer();
+}
+if (onDesktop()) {
+  $("deskScreen").hidden = false;
+  $("deskGo").addEventListener("click", () => {
+    try { localStorage.setItem("odintv-desktop", "1"); } catch (e) {}
+    $("deskScreen").hidden = true;
+    if (!pairFromHash()) start();
+  });
+} else if (!pairFromHash()) start();

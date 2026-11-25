@@ -64,6 +64,9 @@ local JointSpace API. Nothing leaves your network.
 **What you need:** an Android TV / Google TV (Android 8+) and a phone on the same Wi-Fi. Your phone only
 needs a browser.
 
+**You use it from your phone.** The TV app only shows the setup and a QR code; the remote, apps and
+settings open on the phone. A computer (or an AI assistant on it) is only needed to install, if at all.
+
 1. **Install the APK** from [Releases](https://github.com/odinozlen/odin-tv-magic/releases/latest) (direct link:
    `https://github.com/odinozlen/odin-tv-magic/releases/latest/download/odin-tv-magic.apk`), or [build it](#build).
    Either way works:
@@ -87,9 +90,11 @@ needs a browser.
    Google TV / Android 12+ without a network-debugging switch: turn on **Wireless debugging** instead and
    enter its pairing code in the panel (*Settings › TV connection*). Tick **Always allow on this network**
    so the app can switch it back on after a reboot.
-3. **Scan the QR code with your phone camera.** The panel opens and the phone is paired. You can do this
-   before step 2: the panel then starts in *basic mode* (below) and unlocks the rest when the setup is done.
-   On iPhone: *Share › Add to Home Screen* for a full-screen app.
+3. **Scan the QR code on the TV with your phone camera.** The panel opens on the phone and the phone is
+   paired. You can do this before step 2: the panel then starts in *basic mode* (below) and unlocks the
+   rest when the setup is done. Then add it to the phone's home screen so it opens like an app, without
+   the QR code: iPhone: Safari *Share › Add to Home Screen*; Android: Chrome *⋮ › Add to Home screen*.
+   Opened on a computer, the panel first says it is made for the phone.
 4. **Philips only:** tap *Show PIN on TV* in the panel and enter the PIN to unlock Ambilight & co.
 
 **Basic mode (before the ADB setup).** The panel already works with what Android allows any app:

@@ -45,7 +45,7 @@ public final class MainActivity extends Activity {
     private final Handler handler = new Handler();
     private final AtomicBoolean attempting = new AtomicBoolean();
     private ImageView qr;
-    private TextView url, codeLabel, code, codeValid, scan, status, note, warning;
+    private TextView url, codeLabel, code, codeValid, lead, scan, status, note, warning;
     private LinearLayout setupCard;
     private TextView stepNo, stepTitle, stepBody, stepPath;
     private Button stepButton, forget;
@@ -131,7 +131,9 @@ public final class MainActivity extends Activity {
         setupCard.setVisibility(View.GONE);
 
         // ---- phone pairing ----
-        scan = text(Strings.tv("tv.scan"), 18, DIM, false);
+        lead = text(Strings.tv("tv.lead"), 22, Color.WHITE, true);
+        col.addView(lead);
+        scan = text(Strings.tv("tv.scan"), 16, DIM, false);
         col.addView(scan);
         url = text("", 16, DIM, false);
         col.addView(url);
@@ -378,6 +380,7 @@ public final class MainActivity extends Activity {
         qp.width = qp.height = setup ? qrSmall : qrBig;
         qr.setLayoutParams(qp);
         scan.setVisibility(setup ? View.GONE : View.VISIBLE);
+        lead.setVisibility(setup ? View.GONE : View.VISIBLE);
         codeValid.setVisibility(setup ? View.GONE : View.VISIBLE);
         warning.setVisibility(setup ? View.GONE : View.VISIBLE);
         code.setTextSize(setup ? 36 : 50);

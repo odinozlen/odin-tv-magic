@@ -53,6 +53,9 @@ Panel Türkçe ya da İngilizce (telefonun diline göre, değiştirilebilir).
 **Gerekenler:** Android TV / Google TV (Android 8+) ve aynı Wi-Fi'da bir telefon. Telefonda yalnızca
 tarayıcı lazım.
 
+**Telefonundan kullanırsın.** TV'deki uygulama yalnızca kurulumu ve bir karekodu gösterir; kumanda,
+uygulamalar ve ayarlar telefonda açılır. Bilgisayar (ya da üzerindeki yapay zekâ asistanı) en fazla kurulum için gerekir.
+
 1. **APK'yı kur:** [Releases](https://github.com/odinozlen/odin-tv-magic/releases/latest)'tan (doğrudan bağlantı:
    `https://github.com/odinozlen/odin-tv-magic/releases/latest/download/odin-tv-magic.apk`) ya da [derle](#derleme).
    İki yol da olur:
@@ -76,8 +79,10 @@ tarayıcı lazım.
    Ağ üzerinden hata ayıklama anahtarı olmayan Google TV / Android 12+: bunun yerine **Kablosuz hata ayıklama**'yı
    aç ve eşleştirme kodunu panelde gir (*Ayarlar › TV bağlantısı*). **Bu ağda her zaman izin ver**'i işaretle
    ki uygulama yeniden başlatmadan sonra onu tekrar açabilsin.
-3. **Karekodu telefon kamerasıyla okut.** Panel açılır, telefon eşleşir. Bunu 2. adımdan önce de yapabilirsin:
-   panel o zaman *temel mod*da açılır (aşağıda), kurulum bitince gerisi açılır. iPhone'da *Paylaş › Ana Ekrana Ekle*.
+3. **TV'deki karekodu telefonunun kamerasıyla okut.** Panel telefonda açılır, telefon eşleşir. Bunu 2. adımdan
+   önce de yapabilirsin: panel o zaman *temel mod*da açılır (aşağıda), kurulum bitince gerisi açılır. Sonra
+   telefonun ana ekranına ekle ki karekodsuz, uygulama gibi açılsın: iPhone'da Safari *Paylaş › Ana Ekrana Ekle*;
+   Android'de Chrome *⋮ › Ana ekrana ekle*. Bilgisayarda açılırsa panel önce telefon için yapıldığını söyler.
 4. **Yalnızca Philips:** panelde *TV'de PIN göster*'e bas ve PIN'i gir (Ambilight ve diğerleri için).
 
 **Temel mod (ADB kurulumundan önce).** Panel, Android'in her uygulamaya izin verdiği şeylerle şimdiden çalışır:
