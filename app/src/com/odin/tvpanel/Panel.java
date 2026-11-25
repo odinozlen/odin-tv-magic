@@ -54,6 +54,7 @@ final class Panel {
     final Launchers launchers;
     final Debloat debloat;
     final Addons addons;
+    final Updater updater;
     final Picture picture;
     final Surprise surprise;
     final boolean philips;
@@ -73,6 +74,7 @@ final class Panel {
         this.launchers = new Launchers(ctx, this);
         this.debloat = new Debloat(ctx, this);
         this.addons = new Addons(ctx, this);
+        this.updater = new Updater(ctx, this, dir);
         this.log = new File(dir, "panel.log");
         this.philips = detectPhilips();
         this.picture = new Picture(this, new TvUi(adb), dir);
@@ -120,7 +122,8 @@ final class Panel {
                 .put("uptime_h", Math.round(SystemClock.elapsedRealtime() / 360000.0) / 10.0)
                 .put("party", settings.partyMode())
                 .put("surprise", surprise.running())
-                .put("philips", philips);
+                .put("philips", philips)
+                .put("update", updater.json(lang));
         JSONObject a = new JSONObject().put("state", Strings.t(lang, adb.state)).put("key", adb.state)
                 .put("transport", adb.transport == null ? JSONObject.NULL : adb.transport)
                 .put("tlsPaired", adb.tlsPaired());
@@ -332,12 +335,9 @@ final class Panel {
             log("launch " + pkg + " (JointSpace)");
             return new Result(200, "launch.ok", apps.label(pkg));
         }
+        // The AirPlay receiver: start it and go back home (see Addons.startAirPlay).
+        if (AIRPLAY.equals(pkg)) return addons.startAirPlay();
         adb.shell(cmd);
-        if (AIRPLAY.equals(pkg)) {
-            // The receiver service starts with the app; go back home so the TV is usable.
-            SystemClock.sleep(4000);
-            adb.shell("input keyevent KEYCODE_HOME");
-        }
         log("launch " + pkg);
         return new Result(200, "launch.ok", apps.label(pkg));
     }

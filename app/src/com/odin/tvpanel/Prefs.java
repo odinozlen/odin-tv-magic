@@ -25,6 +25,11 @@ final class Prefs {
         return o.optBoolean("partyMode", false);
     }
 
+    /** Daily update check against GitHub (on by default; off = no request at all). */
+    synchronized boolean updateCheck() {
+        return o.optBoolean("updateCheck", true);
+    }
+
     synchronized JSONArray favorites() {
         JSONArray a = o.optJSONArray("favorites");
         return a == null ? null : a;
@@ -49,12 +54,14 @@ final class Prefs {
     synchronized JSONObject toJson() throws Exception {
         return new JSONObject()
                 .put("partyMode", partyMode())
+                .put("updateCheck", updateCheck())
                 .put("hiddenStyles", hiddenStyles());
     }
 
     /** Applies only known keys, with validation. */
     synchronized void update(JSONObject in) throws Exception {
         if (in.has("partyMode")) o.put("partyMode", in.getBoolean("partyMode"));
+        if (in.has("updateCheck")) o.put("updateCheck", in.getBoolean("updateCheck"));
         if (in.has("hiddenStyles")) o.put("hiddenStyles", strings(in.getJSONArray("hiddenStyles"), 30, 40));
         if (in.has("favorites")) o.put("favorites", packages(in.getJSONArray("favorites")));
         save();

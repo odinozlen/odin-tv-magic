@@ -253,6 +253,9 @@ final class HttpServer implements Runnable {
                 case "debloat":
                     json(out, 200, panel.debloat.json(lang));
                     return;
+                case "update":
+                    json(out, 200, panel.updater.json(lang));
+                    return;
                 case "addons": {
                     JSONObject a = panel.addons.json();
                     String ek = panel.addons.errorKey();
@@ -287,6 +290,9 @@ final class HttpServer implements Runnable {
             else if ("debloat/disable".equals(p)) res = panel.debloat.disable(body.optJSONArray("packages") == null ? new org.json.JSONArray() : body.getJSONArray("packages"));
             else if ("debloat/enable".equals(p)) res = panel.debloat.enable(body.optJSONArray("packages") == null ? new org.json.JSONArray() : body.getJSONArray("packages"));
             else if ("addons/airplay".equals(p)) res = panel.addons.installAirPlay();
+            else if ("update/check".equals(p)) res = panel.updater.checkNow();
+            else if ("update/install".equals(p)) res = panel.updater.install();
+            else if ("addons/airplay/start".equals(p)) res = panel.addons.startAirPlay();
             else if ("launcher/install".equals(p)) res = panel.launchers.install(body.optString("pkg"));
             else if ("adb/retry".equals(p)) {
                 panel.adb.retry();

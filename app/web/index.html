@@ -241,6 +241,9 @@
   .list { background: linear-gradient(180deg, #1a1b21, #15161b); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
   .row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); min-height: 58px; }
   .row:first-child { border-top: 0; }
+  .card.upd { border: 1px solid var(--accent); background: linear-gradient(135deg, rgba(91,140,255,.16), transparent 70%), var(--surface, transparent); }
+  .card.upd .link { align-self: flex-start; }
+  #updState { font-weight: 500; color: var(--dim); font-size: 13.5px; }
   .row .grow { flex: 1; min-width: 0; font-weight: 600; }
   .row .grow small { display: block; color: var(--dim); font-size: 12.5px; font-weight: 400; margin-top: 2px; line-height: 1.35; }
   .row img { width: 34px; height: 34px; border-radius: 9px; flex: none; background: var(--surface-2); object-fit: cover; }
@@ -407,6 +410,15 @@
 
   <!-- ================= HOME ================= -->
   <main class="page" data-page="home">
+    <section class="card stack upd" id="updCard" hidden style="margin-bottom:10px">
+      <div>
+        <h3 id="updTitle"></h3>
+        <div class="hint" style="margin-top:4px" id="updText"></div>
+      </div>
+      <button class="primary" id="updGo" data-i18n="upd.go">Update</button>
+      <a class="link" id="updNotes" target="_blank" rel="noopener noreferrer" data-i18n="upd.notes">What's new</a>
+    </section>
+
     <section class="card stack" id="philipsHomeCard" hidden style="margin-bottom:10px">
       <div>
         <h3 data-i18n="philips.title">Connect Philips features</h3>
@@ -638,6 +650,18 @@
       <div class="row">
         <div class="grow"><span data-i18n="party.name">Surprise</span><small data-i18n="party.desc"></small></div>
         <button class="tog" id="partyTog" aria-label="party mode"></button>
+      </div>
+    </div>
+
+    <h2 data-i18n="upd.section">Updates</h2>
+    <div class="list">
+      <div class="row">
+        <div class="grow"><span data-i18n="upd.auto">Automatic update check</span></div>
+        <button class="tog" id="updTog" aria-label="automatic update check"></button>
+      </div>
+      <div class="row">
+        <div class="grow"><span id="updState"></span></div>
+        <button class="btn tint" id="updCheck" data-i18n="upd.check">Check now</button>
       </div>
     </div>
 

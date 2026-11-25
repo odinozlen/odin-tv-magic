@@ -24,7 +24,7 @@ A 401 has `reason: "pair"` (unknown/invalid) or `reason: "clock"` (+ `time`, ret
 
 | Method | Path | Body | Notes |
 |---|---|---|---|
-| GET | /api/status | | RAM, uptime, ADB state, foreground app, sources, Philips info (`paired`, `reachable`, `has_ambilight`: true/false/null = unknown, `ambilight`), `caps` (what works now: `adb`, `nav`, `text`, `apps`, `sleep`, `media`, `volume`; without ADB the panel is in basic mode) |
+| GET | /api/status | | RAM, uptime, ADB state, foreground app, sources, Philips info (`paired`, `reachable`, `has_ambilight`: true/false/null = unknown, `ambilight`), `caps` (what works now: `adb`, `nav`, `text`, `apps`, `sleep`, `media`, `volume`; without ADB the panel is in basic mode), `update` (same as `GET /api/update`) |
 | GET | /api/apps | | installed launchable apps, favourites first |
 | GET | /api/appicon/{package} | | PNG 96×96 |
 | POST | /api/launch/{package} | | open an installed app |
@@ -35,8 +35,11 @@ A 401 has `reason: "pair"` (unknown/invalid) or `reason: "clock"` (+ `time`, ret
 | POST | /api/key/{del,enter} | | |
 | GET/POST | /api/volume | `{value?, muted?}` | |
 | GET | /api/screenshot | | JPEG |
-| GET | /api/settings | | party mode, hidden styles, paired phones |
-| POST | /api/settings | `{partyMode?, hiddenStyles?, favorites?}` | |
+| GET | /api/settings | | party mode, `updateCheck`, hidden styles, paired phones |
+| POST | /api/settings | `{partyMode?, updateCheck?, hiddenStyles?, favorites?}` | `updateCheck: false` stops all requests to GitHub |
+| GET | /api/update | | `{enabled, current, latest, available, notes_url, checked, state, percent, error?}`; `state`: idle, downloading, verifying, installing, error |
+| POST | /api/update/check | | ask GitHub now (otherwise at most once a day); 409 when the check is off |
+| POST | /api/update/install | | download, verify (SHA-256 file + same signing certificate + newer version) and install over ADB; 409 without ADB (`msg` explains the Downloader route), without a checksum file or when nothing is newer. The app restarts; poll `/api/hello` until `version` changes |
 | POST | /api/devices/revoke | `{id}` | unpair a phone |
 | GET | /api/launchers | | installed home screens |
 | POST | /api/launcher | `{component}` | set the home screen (turns the stock Android TV launcher off only if the TV ignores the choice) |
@@ -45,8 +48,9 @@ A 401 has `reason: "pair"` (unknown/invalid) or `reason: "clock"` (+ `time`, ret
 | GET | /api/debloat | | suggestions for this TV (`enabled` = can be turned off) |
 | POST | /api/debloat/disable | `{packages:[…]}` | ≤10, only packages from the bundled lists |
 | POST | /api/debloat/enable | `{packages:[…]}` | turn back on |
-| GET | /api/addons | | AirPlay receiver: installed / download progress |
-| POST | /api/addons/airplay | | download (pinned SHA-256) and install |
+| GET | /api/addons | | AirPlay receiver: `installed`, `running` (its service runs, so iPhones see the TV), `builtIn` (the TV announces AirPlay itself), `name` (the AirPlay name this TV announces), `state` (idle / downloading / installing / starting / done / error), `percent`, `error` |
+| POST | /api/addons/airplay | | download (pinned SHA-256), install, then start the receiver and check that its service runs |
+| POST | /api/addons/airplay/start | | start the installed receiver (opens it once, back to home only if it is in front); 500 `airplay.not_started` if its service does not run |
 | POST | /api/adb/retry | | connect again so the TV shows "Allow debugging?" again (polling never re-raises a dismissed prompt) |
 | POST | /api/adb/pair | `{code, port?}` | wireless-debugging pairing (port found via mDNS if omitted) |
 | POST | /api/surprise | `{message?}` | party mode, only when enabled |
@@ -60,3 +64,10 @@ A 401 has `reason: "pair"` (unknown/invalid) or `reason: "clock"` (+ `time`, ret
 | POST | /api/picture/brightness | `{value}` 0–100 | |
 
 Responses: `{ok, msg}` for actions; messages are localized via `X-Lang`.
+
+## Update check
+
+`GET https://api.github.com/repos/odinozlen/odin-tv-magic/releases/latest` with `User-Agent: OdinTVMagic/<version>`
+and nothing else: at most once a day while `updateCheck` is on, and on `POST /api/update/check`. Only assets
+named `odin-tv-magic.apk` and `odin-tv-magic.apk.sha256` under
+`https://github.com/odinozlen/odin-tv-magic/releases/download/` are used.

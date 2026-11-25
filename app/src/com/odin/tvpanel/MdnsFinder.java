@@ -16,9 +16,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Finds this TV's wireless-debugging ports. adbd announces them over mDNS
- * (_adb-tls-connect._tcp / _adb-tls-pairing._tcp); other phones on the network
- * announce theirs too, so only a service whose address belongs to this TV is used.
+ * Finds services this TV itself announces over mDNS: its wireless-debugging ports
+ * (_adb-tls-connect._tcp / _adb-tls-pairing._tcp) and its AirPlay receiver. Other devices on the
+ * network announce theirs too, so only a service whose address belongs to this TV is used.
  */
 final class MdnsFinder implements AdbClient.PortFinder {
     private final long timeoutMs;
@@ -35,6 +35,33 @@ final class MdnsFinder implements AdbClient.PortFinder {
 
     @Override
     public int find(String serviceType) throws IOException {
+        return findOwn(serviceType).getPort();
+    }
+
+    /** The instance name this TV announces for a service type (e.g. its AirPlay name). */
+    String findName(String serviceType) throws IOException {
+        return unescape(findOwn(serviceType).getServiceName());
+    }
+
+    /** Some Android versions return DNS escapes ("Odin\\032TV"); undo them. */
+    static String unescape(String n) {
+        if (n == null) return "";
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < n.length(); i++) {
+            char c = n.charAt(i);
+            if (c == '\\' && i + 3 < n.length() && n.substring(i + 1, i + 4).matches("[0-9]{3}")) {
+                b.append((char) Integer.parseInt(n.substring(i + 1, i + 4)));
+                i += 3;
+            } else if (c == '\\' && i + 1 < n.length()) {
+                b.append(n.charAt(++i));
+            } else {
+                b.append(c);
+            }
+        }
+        return b.toString();
+    }
+
+    private NsdServiceInfo findOwn(String serviceType) throws IOException {
         NsdManager nsd = (NsdManager) ctx.getSystemService(Context.NSD_SERVICE);
         final LinkedBlockingQueue<NsdServiceInfo> found = new LinkedBlockingQueue<>();
         final CountDownLatch started = new CountDownLatch(1);
@@ -55,7 +82,7 @@ final class MdnsFinder implements AdbClient.PortFinder {
                 if (s == null) break;
                 NsdServiceInfo r = resolve(nsd, s);
                 if (r != null && r.getHost() != null && (r.getHost().isLoopbackAddress() || mine.contains(r.getHost()))) {
-                    return r.getPort();
+                    return r;
                 }
             }
         } catch (InterruptedException e) {

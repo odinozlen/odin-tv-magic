@@ -110,6 +110,34 @@ Verify: the panel's Home tab shows RAM and uptime, nothing is dimmed and the set
 - Philips: Ambilight still follows the picture.
 - After the last batch: reboot the TV (`adb reboot`) and check everything again.
 
+## Updating an existing install
+
+Updating keeps the app's data: paired phones, settings, the ADB key and the Philips pairing stay. Never
+uninstall first (that wipes them and the phones must pair again).
+
+- **From the panel (preferred):** when a new version exists, the phone panel shows *"1.0.x is ready – Update"*
+  (and *Settings › Updates › Check now* asks at once). The person taps **Update**; the TV downloads, verifies
+  (SHA-256 file + same signing key) and installs it, and the panel reloads by itself after about a minute.
+  This needs the ADB setup (Step 2). Do not tap it for them.
+- **With a computer:**
+
+  ```bash
+  curl -LO https://github.com/odinozlen/odin-tv-magic/releases/latest/download/odin-tv-magic.apk
+  curl -LO https://github.com/odinozlen/odin-tv-magic/releases/latest/download/odin-tv-magic.apk.sha256
+  shasum -a 256 -c odin-tv-magic.apk.sha256
+  adb connect <tv-ip>:5555
+  adb install -r odin-tv-magic.apk      # -r = replace, keeps data; never `pm uninstall`
+  ```
+
+  The app restarts by itself after the update (no need to open it).
+- **No computer, no ADB setup:** on the TV, *Downloader* › `odinozlen.com/tv` › install over the old
+  version (Android asks "Do you want to install an update to this app?").
+- `INSTALL_FAILED_UPDATE_INCOMPATIBLE` means the installed copy was signed with another key (e.g. built
+  locally). Explain that the data (paired phones) is lost if they switch, and ask before uninstalling that
+  app (it is the person's own app, not a system package; rule 1 is about the TV's packages).
+- The daily check asks only `api.github.com` (no personal data) and can be turned off in *Settings ›
+  Updates*.
+
 ## Known pitfalls
 
 - macOS: `adb connect` fails with "No route to host" while ping works → the adb binary has no Local Network
@@ -141,6 +169,22 @@ Verify: the panel's Home tab shows RAM and uptime, nothing is dimmed and the set
 - Security model: [SECURITY.md](SECURITY.md). Do not weaken it (Host check, pairing, request signing,
   fixed command list). Anything from the network must never reach the shell unvalidated.
 - Every user-facing string exists in English and Turkish (`Strings.java`, `app/web/app.js`).
+- The update check (`Updater.java`) talks only to GitHub over HTTPS. For tests, build with
+  `ODIN_UPDATE_TEST_BASE=http://10.0.2.2:8765` (emulator host): it reads `<base>/latest.json` (same shape as
+  GitHub's release JSON) and the assets under `<base>/`; the test copy's manifest also needs
+  `android:usesCleartextTraffic="true"`. Never release such a build; release builds leave it empty.
 - Never rename or remove the launcher entry `com.odin.tvpanel/.Magic` (activity-alias in the
   manifest) or the package id: launchers remember the exact component of a tile, and existing
   installs would get a tile that no longer opens.
+
+## Releasing (maintainer)
+
+1. Bump `versionCode` and `versionName` in `app/AndroidManifest.xml`; move `## Unreleased` in CHANGELOG.md to
+   the new version.
+2. Build with the release key: `K=$HOME/.odin-tv-magic; ODIN_KEYSTORE=$K/release.jks
+   ODIN_KEYSTORE_PASS="$(cat $K/release.pass)" sh scripts/build.sh` (warning-free; never commit or move the key).
+3. `cd build && shasum -a 256 odin-tv-magic.apk > odin-tv-magic.apk.sha256`
+4. Tag `vX.Y.Z` and create the GitHub release with **both** `odin-tv-magic.apk` and
+   `odin-tv-magic.apk.sha256` (exactly these names) and the SHA-256 in the notes. Without the `.sha256`
+   file, installs that update from the panel refuse the release. Never mark a test build as the latest
+   release: every install checks `releases/latest`.

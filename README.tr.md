@@ -4,7 +4,7 @@
 
 **Odin TV Magic, herhangi bir telefon tarayıcısını Android TV ve Google TV için hızlı bir kumandaya çevirir,
 TV'nin belleğini tek dokunuşla boşaltır ve ön yüklü gereksiz uygulamaları kapatır. Telefona uygulama yok,
-root yok, bulut yok; hiçbir şey ev ağının dışına çıkmaz.**
+root yok, bulut yok; ev ağının dışına giden tek istek, kapatabileceğin günlük güncelleme denetimi.**
 
 [English](README.md)
 
@@ -39,7 +39,7 @@ root yok, bulut yok; hiçbir şey ev ağının dışına çıkmaz.**
 | TV ekran görüntüsü | ✅ | |
 | **TV görünümünü değiştir**: Projectivy ya da FLauncher'a geç (Play Store'dan kurar) ve geri al | ✅ | |
 | **TV'yi hızlandır**: kapatılabilecek ön yüklü uygulamaları önerir (asla silmez, tek dokunuşla geri alınır) | ✅ (güvenli ortak liste) | + test edilmiş Philips listesi |
-| **AirPlay** olmayan TV'lere: açık kaynak alıcıyı tek dokunuşla kur (sağlaması doğrulanır) | ✅ | |
+| **AirPlay** olmayan TV'lere: iPhone, iPad ya da Mac ekranını, fotoğraf ve videolarını TV'de göster. Açık kaynak alıcıyı tek dokunuşla kur (sağlaması doğrulanır); sonra TV ile birlikte açılır | ✅ | |
 | Sürpriz modu: 45 sn'lik "TV hacklendi" gösterisi (varsayılan kapalı) | ✅ | + Ambilight efektleri |
 | Ambilight: aç/kapat, videoyu/müziği takip, 8 renk | | ✅ |
 | Görüntü tarzı (Canlı, Doğal, Film, Oyun…), HDR / Dolby Vision listeleri dahil | | ✅ |
@@ -93,6 +93,20 @@ araçları kurulum ister; panel o zamana kadar bunları soluk gösterir.
 Yeniden başlatmadan sonra uygulama kendiliğinden açılır. Google TV'de kablosuz hata ayıklamayı da tekrar açar
 (güvenilir olarak işaretlediğin bir Wi-Fi ağında çalışır).
 
+## Güncellemeler
+
+TV günde bir kez GitHub'a en yeni sürümü sorar
+(`https://api.github.com/repos/odinozlen/odin-tv-magic/releases/latest`; User-Agent `OdinTVMagic/<sürüm>`,
+sen ya da TV hakkında başka hiçbir bilgi gitmez). Yeni sürüm varsa panelde *"1.0.x hazır – Güncelle"*, TV
+ekranında da bir satır çıkar. Sen **Güncelle**'ye dokunmadan hiçbir şey kurulmaz. Dokununca TV APK'yı GitHub
+sürümünden indirir, sürümdeki `odin-tv-magic.apk.sha256` dosyasıyla karşılaştırır, yüklü uygulamayla aynı
+anahtarla imzalı olduğunu kontrol eder ve kendi ADB bağlantısıyla kurar (`adb install -r` gibi). Eşleşmiş
+telefonlar ve ayarlar kalır; panel yaklaşık bir dakika sonra kendiliğinden yenilenir.
+
+- **Kapatmak için:** panelde *Ayarlar › Güncellemeler › Otomatik güncelleme kontrolü*. Kapalıyken GitHub'a hiç istek gitmez.
+- **ADB kurulumu yoksa** (temel mod) panel kuramaz: TV'de *Downloader*'ı aç, `odinozlen.com/tv` yaz ve eski
+  sürümün üzerine kur (ayarlar ve eşleşmiş telefonlar kalır). Bilgisayardan: `adb install -r odin-tv-magic.apk`.
+
 ## Güvenlik
 
 Kurmadan önce oku. Ayrıntılar: [SECURITY.md](SECURITY.md).
@@ -104,6 +118,8 @@ Kurmadan önce oku. Ayrıntılar: [SECURITY.md](SECURITY.md).
 - **Evde kullan.** Ağ/kablosuz hata ayıklama, ağdaki her cihaza TV'yi yönetmek için *izin isteme*
   imkânı verir. **Senin başlatmadığın bir "Hata ayıklamaya izin ver" penceresini asla onaylama.**
   Ortak ağlarda kullanma, modemde 5555 / 8080 portlarını asla dışarı açma.
+- **Güncellemeler** yalnızca sen *Güncelle*'ye dokununca, yalnızca sürümün SHA-256 dosyasıyla eşleşen ve yüklü
+  uygulamayla aynı anahtarla imzalı bir APK ise kurulur. Günlük denetim kapatılabilir ([Güncellemeler](#güncellemeler)).
 
 ## Sorun giderme
 
@@ -121,6 +137,11 @@ Kurmadan önce oku. Ayrıntılar: [SECURITY.md](SECURITY.md).
   metni kopyala ve [hata bildirimine](https://github.com/odinozlen/odin-tv-magic/issues) ekle: yalnızca TV
   modelini, Android sürümünü ve JointSpace API'sinin bildirdiklerini içerir. Yeni Philips Google TV
   yazılımları henüz test edilmedi.
+- **AirPlay: TV iPhone'da görünmüyor:** panelde *Ayarlar › AirPlay*'e bak. *Açık* ise alıcı çalışıyordur;
+  iPhone'da Denetim Merkezi › *Ekran Yansıtma*'yı aç ve orada yazan adı seç (varsayılan *Android AirPlay*);
+  telefon TV ile aynı Wi-Fi'da olmalı. *Yüklü ama kapalı* ise *Aç*'a dokun. TV'de uygulamanın adı *AirPlay
+  Server*'dır (Uygulamalar'da); açık kalması gerekmez. 1.0.3'ten önce panel onu kuruyor ama Android 12+ /
+  Google TV'de başlatmıyordu: bir kez *Aç*'a dokun.
 - **Uygulamalar "internet yok" diyor ama ağ çalışıyor:** TV'nin saati yanlış, TLS başarısız oluyor. Otomatik
   tarih ve saati aç (`adb shell settings put global auto_time 1`).
 - **Google TV yeniden başlayınca bağlantı kopuyor:** *Kablosuz hata ayıklama*'da *Bu ağda her zaman izin ver*'in
@@ -153,6 +174,9 @@ Android Studio ya da Gradle gerekmez. Linux veya macOS:
 scripts/setup-toolchain.sh   # sabit sürümlü JDK 17 + Android SDK, sağlamaları doğrulanır
 scripts/build.sh             # -> build/odin-tv-magic.apk
 ```
+
+Sürümlerde iki dosya yüklenir: `odin-tv-magic.apk` ve `odin-tv-magic.apk.sha256`
+(`shasum -a 256 odin-tv-magic.apk`); uygulama içi güncelleme sağlama dosyası olmayan sürümü kurmaz.
 
 ## Uyumluluk
 

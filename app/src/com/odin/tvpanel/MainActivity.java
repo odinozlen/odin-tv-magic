@@ -45,7 +45,7 @@ public final class MainActivity extends Activity {
     private final Handler handler = new Handler();
     private final AtomicBoolean attempting = new AtomicBoolean();
     private ImageView qr;
-    private TextView url, codeLabel, code, codeValid, lead, scan, status, note, warning;
+    private TextView url, codeLabel, code, codeValid, lead, scan, status, update, note, warning;
     private LinearLayout setupCard;
     private TextView stepNo, stepTitle, stepBody, stepPath;
     private Button stepButton, forget;
@@ -148,6 +148,9 @@ public final class MainActivity extends Activity {
         status = text(Strings.tv("tv.starting"), 14, DIM, false);
         status.setPadding(0, (int) (10 * d), 0, (int) (4 * d));
         col.addView(status);
+        update = text("", 14, ACCENT, true);
+        update.setVisibility(View.GONE);
+        col.addView(update);
 
         forget = button(Strings.tv("tv.forget"), false);
         forget.setOnClickListener(new View.OnClickListener() {
@@ -364,6 +367,9 @@ public final class MainActivity extends Activity {
                 if (s.length() > 0) s.append("   ·   ");
                 s.append(Strings.tv("tv.devices", p.auth.count()));
                 status.setText(s);
+                String newer = p.updater.available() ? p.updater.latest() : null;
+                update.setText(newer == null ? "" : "⬆ " + Strings.tv("tv.update", newer));
+                update.setVisibility(newer == null ? View.GONE : View.VISIBLE);
             }
             if (visible) handler.postDelayed(this, 1000);
         }

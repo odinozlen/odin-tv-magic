@@ -1,6 +1,8 @@
 package com.odin.tvpanel;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
 
@@ -32,7 +34,7 @@ final class Addons {
 
     private final Context ctx;
     private final Panel p;
-    private volatile String state = "idle";   // idle, downloading, installing, done, error
+    private volatile String state = "idle";   // idle, downloading, installing, starting, done, error
     private volatile int percent;
     private volatile String errorKey;
 
@@ -50,31 +52,82 @@ final class Addons {
         }
     }
 
-    private volatile Boolean builtIn;
-    private volatile long builtInAt;
+    private volatile String announced;   // name this TV announces as an AirPlay receiver, "" = none
+    private volatile long announcedAt;
 
-    /** Some TVs (many Sony, LG, Samsung, TCL…) have AirPlay built in: then there is nothing to add. */
-    private boolean builtInAirPlay() {
-        if (builtIn != null && SystemClock.elapsedRealtime() - builtInAt < 10 * 60_000L) return builtIn;
-        boolean found;
+    /**
+     * The AirPlay name this TV announces on the network (what iPhones list under Screen Mirroring),
+     * "" when it announces none. Some TVs (many Sony, LG, Samsung, TCL…) have AirPlay built in.
+     */
+    private String announcedName() {
+        if (announced != null && SystemClock.elapsedRealtime() - announcedAt < 60_000L) return announced;
+        String name;
         try {
-            new MdnsFinder(ctx, 2500).find("_airplay._tcp");
-            found = true;
+            name = new MdnsFinder(ctx, 2500).findName("_airplay._tcp");
         } catch (Exception e) {
-            found = false;
+            name = "";
         }
-        builtIn = found;
-        builtInAt = SystemClock.elapsedRealtime();
-        return found;
+        announced = name;
+        announcedAt = SystemClock.elapsedRealtime();
+        return name;
     }
 
     JSONObject json() throws Exception {
         boolean ours = installed(AIRPLAY);
+        String name = announcedName();
+        // Ours: is the receiver running, i.e. can an iPhone see this TV right now? The service list
+        // is current; the network announcement (cached for a minute) is the fallback without ADB.
+        boolean running = false;
+        if (ours) {
+            try {
+                running = serviceRunning();
+            } catch (Exception e) {
+                running = name.length() > 0;
+            }
+        }
         return new JSONObject().put("airplay", new JSONObject()
                 .put("installed", ours)
-                .put("builtIn", !ours && builtInAirPlay())
+                .put("builtIn", !ours && name.length() > 0)
+                .put("running", running)
+                .put("name", name.length() > 0 ? name : JSONObject.NULL)
                 .put("state", state).put("percent", percent)
                 .put("sizeMb", AIRPLAY_SIZE / 1_000_000));
+    }
+
+    /** The receiver's launcher activity ("pkg/cls"), or null. */
+    private String launcherComponent() {
+        PackageManager pm = ctx.getPackageManager();
+        Intent i = pm.getLeanbackLaunchIntentForPackage(AIRPLAY);
+        if (i == null) i = pm.getLaunchIntentForPackage(AIRPLAY);
+        ComponentName c = i == null ? null : i.getComponent();
+        return c == null ? null : c.getPackageName() + "/" + c.getClassName();
+    }
+
+    private boolean serviceRunning() throws Exception {
+        return p.adb.shell("dumpsys activity services " + AIRPLAY + " | grep -c 'ServiceRecord{'").trim().matches("[1-9][0-9]*");
+    }
+
+    /**
+     * Starts the receiver: its service starts with the app (and from then on with the TV), so open it
+     * once and go back home. Started with `am start -n`, not `monkey`, which quits without doing
+     * anything on TVs without hardware system keys (Google TV and many others), so the app was never
+     * started and Android does not start a never-opened app after a reboot either.
+     */
+    synchronized Panel.Result startAirPlay() throws Exception {
+        if (!installed(AIRPLAY)) return new Panel.Result(404, "airplay.missing");
+        String comp = launcherComponent();
+        if (comp == null) return new Panel.Result(500, "airplay.not_started");
+        p.adb.shell("am start -n " + Panel.shellQuote(comp));
+        boolean running = false;
+        for (int i = 0; i < 20 && !(running = serviceRunning()); i++) SystemClock.sleep(500);
+        SystemClock.sleep(1500);
+        // Back home only when the receiver's own screen is in front (never a key into another app).
+        if (TvUi.normalize(new TvUi(p.adb).foregroundActivity()).startsWith(AIRPLAY + "/")) {
+            p.adb.shell("input keyevent KEYCODE_HOME");
+        }
+        announced = null;
+        p.log("AirPlay receiver " + (running ? "started" : "did not start"));
+        return running ? new Panel.Result(200, "airplay.started") : new Panel.Result(500, "airplay.not_started");
     }
 
     String errorKey() {
@@ -83,7 +136,7 @@ final class Addons {
 
     synchronized Panel.Result installAirPlay() {
         if (installed(AIRPLAY)) return new Panel.Result(200, "addon.installed");
-        if ("downloading".equals(state) || "installing".equals(state)) return new Panel.Result(409, "addon.busy");
+        if ("downloading".equals(state) || "installing".equals(state) || "starting".equals(state)) return new Panel.Result(409, "addon.busy");
         state = "downloading";
         percent = 0;
         errorKey = null;
@@ -95,12 +148,10 @@ final class Addons {
                     download(apk);
                     state = "installing";
                     install(apk);
-                    // The receiver service starts with its app; open it once, then go back home.
-                    p.adb.shell("monkey -p " + AIRPLAY + " -c android.intent.category.LEANBACK_LAUNCHER 1");
-                    SystemClock.sleep(4000);
-                    p.adb.shell("input keyevent KEYCODE_HOME");
-                    state = "done";
                     p.log("AirPlay receiver installed");
+                    state = "starting";
+                    if (startAirPlay().code != 200) throw new IOException("airplay.not_started");
+                    state = "done";
                 } catch (Exception e) {
                     errorKey = Strings.has(e.getMessage()) ? e.getMessage() : "addon.failed";
                     state = "error";

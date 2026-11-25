@@ -21,8 +21,18 @@ against a network you do not control.
 | Resource exhaustion | Bounded request line (8 KB), headers (40), body (64 KB), 30 s socket timeout, bounded thread pool. |
 | Stolen phone | Remove it in the panel (*Settings › Paired phones*) or on the TV (*Forget all phones*). |
 | Tampered APK | Release APKs list their SHA-256. The signing key is not in the repository. |
+| Tampered or hostile update | Updates install only when a paired phone taps *Update*, never by themselves. The APK is downloaded over HTTPS from this repository's GitHub release and installed only if its SHA-256 matches the release's `odin-tv-magic.apk.sha256`, it is this app with a higher version, and it is signed with the same certificate as the installed app (Android would refuse a different key anyway). Install goes through the app's own ADB connection (`cmd package install -r`); nothing is uninstalled. |
 
 Keys stay in the app's private storage (`allowBackup=false`).
+
+## Requests outside your network
+
+The only one is the **update check**: at most once a day (and when you tap *Check now*) the TV sends
+`GET https://api.github.com/repos/odinozlen/odin-tv-magic/releases/latest` with the User-Agent
+`OdinTVMagic/<version>`. It carries no ids, keys, addresses or device details; GitHub sees the request's
+public IP address like for any web request. Downloading an update fetches the release's two files from
+`github.com` (redirected to GitHub's download servers). Turn it off in the panel: *Settings › Updates ›
+Automatic update check*; then the app makes no request outside your network at all.
 
 ## What you must do
 

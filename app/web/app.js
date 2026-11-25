@@ -66,8 +66,12 @@ const I18N = {
     "look.title": "Change your TV's look", "look.sub": "Switch to a clean home screen without ads and recommendations.",
     "home.install": "Install", "launcher.projectivy": "Customizable, fast, no ads. Most popular choice.",
     "launcher.flauncher": "Open source, minimal and free.",
-    addons: "Extras", "airplay.desc": "Mirror iPhone, iPad and Mac screens to the TV. Open source, ~%s MB.",
+    addons: "Extras", "airplay.desc": "Show your iPhone, iPad or Mac screen on the TV. ~%s MB.",
+    "airplay.title": "AirPlay (screen mirroring)",
     "airplay.installed": "Installed", "airplay.dl": "Downloading %s%", "airplay.installing": "Installing…", "airplay.open": "Open",
+    "airplay.starting": "Starting…", "airplay.on": "On", "airplay.start": "Turn on",
+    "airplay.off": "Installed but off: iPhones cannot see the TV.",
+    "airplay.how": "<b>iPhone / iPad / Mac:</b> Control Center › Screen Mirroring › <b>%s</b> (same Wi-Fi).",
     apps: "Apps", sources: "Sources", tools: "Tools", keyboard: "Keyboard", screen: "Screen", sleep: "Sleep", restart: "Restart",
     "no.apps": "No apps selected. Pick some in Settings.",
     volume: "Volume", muted: "Muted", "pad.hint": "Tap, swipe or hold", back: "Back", home: "Home", menu: "Menu", type: "Type with keyboard",
@@ -111,6 +115,15 @@ const I18N = {
     "home.none": "Only the stock home screen is installed. Install Projectivy Launcher or FLauncher from the Play Store, then choose it here.",
     "home.gtvnote": "Google TV: the original home stays on (turning it off can require a factory reset). If the Home button still opens Google TV, enable the \"override\" option inside your launcher's settings.",
     "home.confirm": "Make %s the home screen?", "home.restore.confirm": "Go back to the original home screen?",
+    "upd.title": "Odin TV Magic %s is ready", "upd.text": "You have %s. Tap Update: the TV downloads it, checks it and installs it. Paired phones stay paired.",
+    "upd.go": "Update", "upd.notes": "What's new", "upd.confirm": "Update Odin TV Magic to %s? The panel is gone for about a minute while the TV installs it.",
+    "upd.basic": "Updating from the panel needs the setup on the TV. Without it: on the TV open Downloader, type odinozlen.com/tv and install over the old version (your settings stay).",
+    "upd.dl": "Downloading… %s%", "upd.verifying": "Checking the download…", "upd.installing": "Installing… the panel comes back by itself in a moment.",
+    "upd.restarting": "The TV is installing the update. The panel reloads by itself when it is back.",
+    "upd.failed": "The update failed. Nothing was changed.", "upd.done": "Updated to %s",
+    "upd.section": "Updates", "upd.auto": "Automatic update check",
+    "upd.check": "Check now", "upd.off": "Update check is off", "upd.never": "Not checked yet",
+    "upd.current": "Up to date (%s) · checked %s", "upd.avail": "%s is available",
   },
   tr: {
     connecting: "bağlanıyor…", online: "çevrimiçi", offline: "ulaşılamıyor", restarting: "yeniden başlıyor", sleeping: "uykuda",
@@ -172,8 +185,12 @@ const I18N = {
     "look.title": "TV görünümünü değiştir", "look.sub": "Reklamsız, öneri satırları olmayan sade bir ana ekrana geç.",
     "home.install": "Yükle", "launcher.projectivy": "Özelleştirilebilir, hızlı, reklamsız. En popüler seçenek.",
     "launcher.flauncher": "Açık kaynak, sade ve ücretsiz.",
-    addons: "Ekstralar", "airplay.desc": "iPhone, iPad ve Mac ekranını TV'ye yansıt. Açık kaynak, ~%s MB.",
+    addons: "Ekstralar", "airplay.desc": "iPhone, iPad ya da Mac ekranını TV'de göster. ~%s MB.",
+    "airplay.title": "AirPlay (ekran yansıtma)",
     "airplay.installed": "Yüklü", "airplay.dl": "İndiriliyor, yüzde %s", "airplay.installing": "Kuruluyor…", "airplay.open": "Aç",
+    "airplay.starting": "Başlatılıyor…", "airplay.on": "Açık", "airplay.start": "Aç",
+    "airplay.off": "Yüklü ama kapalı: iPhone'lar TV'yi göremez.",
+    "airplay.how": "<b>iPhone / iPad / Mac:</b> Denetim Merkezi › Ekran Yansıtma › <b>%s</b> (aynı Wi-Fi).",
     apps: "Uygulamalar", sources: "Kaynaklar", tools: "Araçlar", keyboard: "Klavye", screen: "Ekran", sleep: "Uyku", restart: "Yeniden başlat",
     "no.apps": "Uygulama seçilmedi. Ayarlar'dan seç.",
     volume: "Ses", muted: "Sessiz", "pad.hint": "Dokun, kaydır ya da basılı tut", back: "Geri", home: "Ana", menu: "Menü", type: "Klavye ile yaz",
@@ -217,6 +234,15 @@ const I18N = {
     "home.none": "Yalnızca orijinal ana ekran yüklü. Play Store'dan Projectivy Launcher ya da FLauncher kur, sonra buradan seç.",
     "home.gtvnote": "Google TV: orijinal ana ekran açık kalır (kapatmak fabrika ayarı gerektirebilir). Ana tuşu hâlâ Google TV'yi açıyorsa, seçtiğin ana ekranın kendi ayarlarındaki \"override\" seçeneğini aç.",
     "home.confirm": "%s ana ekran yapılsın mı?", "home.restore.confirm": "Orijinal ana ekrana dönülsün mü?",
+    "upd.title": "Odin TV Magic %s hazır", "upd.text": "Yüklü sürüm %s. Güncelle'ye dokun: TV indirir, doğrular ve kurar. Eşleşmiş telefonlar eşleşmiş kalır.",
+    "upd.go": "Güncelle", "upd.notes": "Yenilikler", "upd.confirm": "Odin TV Magic %s sürümüne güncellensin mi? TV kurarken panel yaklaşık bir dakika kapalı olur.",
+    "upd.basic": "Panelden güncellemek için TV'deki kurulum gerekir. Kurulum olmadan: TV'de Downloader'ı aç, odinozlen.com/tv yaz ve eski sürümün üzerine kur (ayarların kalır).",
+    "upd.dl": "İndiriliyor, yüzde %s", "upd.verifying": "İndirilen dosya doğrulanıyor…", "upd.installing": "Kuruluyor… panel birazdan kendiliğinden geri gelir.",
+    "upd.restarting": "TV güncellemeyi kuruyor. Panel geri gelince sayfa kendiliğinden yenilenir.",
+    "upd.failed": "Güncelleme başarısız oldu. Hiçbir şey değişmedi.", "upd.done": "%s sürümüne güncellendi",
+    "upd.section": "Güncellemeler", "upd.auto": "Otomatik güncelleme kontrolü",
+    "upd.check": "Şimdi denetle", "upd.off": "Güncelleme denetimi kapalı", "upd.never": "Henüz denetlenmedi",
+    "upd.current": "Güncel (%s) · son denetim %s", "upd.avail": "%s hazır",
   },
 };
 let lang = "en";
@@ -519,6 +545,7 @@ function renderStatus(s) {
   renderParty(s.party, s.surprise);
   $("adbInfo").textContent = s.adb ? t("adb.via", s.adb.state, s.adb.transport || "—") : "";
   $("about").textContent = "Odin TV Magic " + s.version + " · " + (s.model || "");
+  renderUpdate(s.update);
   renderMadeBy();
 }
 async function refresh() {
@@ -1171,6 +1198,7 @@ async function loadSettings() {
     settings = await api("/api/settings");
     renderDevices(settings.devices || []);
     $("partyTog").classList.toggle("on", !!settings.partyMode);
+    $("updTog").classList.toggle("on", settings.updateCheck !== false);
   } catch (e) {}
   if (!allApps.length) await loadApps();
   renderFavList();
@@ -1366,6 +1394,7 @@ $("speedGo").addEventListener("click", e => {
 
 /* ---------------- extras (AirPlay) ---------------- */
 let addonPoll = null;
+const esc = (v) => String(v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 async function loadAddons() {
   let d;
   try { d = await api("/api/addons"); } catch (e) { return; }
@@ -1374,16 +1403,26 @@ async function loadAddons() {
   const row = el("div", "row");
   const ic = el("span", "ic c-teal");
   ic.innerHTML = '<svg class="i" viewBox="0 0 24 24"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/><path d="M12 15l5 6H7z"/></svg>';
-  const txt = el("div", "grow", "AirPlay");
+  const txt = el("div", "grow", t("airplay.title"));
   txt.appendChild(el("small", "", t("airplay.desc", a.sizeMb)));
-  let right;
-  if (a.installed) {
-    right = el("button", "btn tint", t("airplay.open"));
-    right.addEventListener("click", () => busy(right, async () => { toast((await api("/api/launch/io.github.jqssun.airplay", "POST")).msg); }));
+  const busyState = a.state === "downloading" || a.state === "installing" || a.state === "starting";
+  let right, how = false;
+  if (busyState) {
+    right = el("span", "meta spin", a.state === "downloading" ? t("airplay.dl", a.percent)
+      : t(a.state === "starting" ? "airplay.starting" : "airplay.installing"));
+  } else if (a.installed && a.running) {
+    right = el("span", "meta ok", "✓ " + t("airplay.on"));
+    how = true;
+  } else if (a.installed) {
+    txt.appendChild(el("small", "", t("airplay.off")));
+    right = el("button", "btn fill", t("airplay.start"));
+    right.addEventListener("click", () => busy(right, async () => {
+      toast((await api("/api/addons/airplay/start", "POST")).msg);
+      loadAddons();
+    }));
   } else if (a.builtIn) {
     right = el("span", "meta ok", "✓ " + t("airplay.builtin"));
-  } else if (a.state === "downloading" || a.state === "installing") {
-    right = el("span", "meta spin", a.state === "downloading" ? t("airplay.dl", a.percent) : t("airplay.installing"));
+    how = true;
   } else {
     right = el("button", "btn fill", t("airplay.add"));
     right.addEventListener("click", () => busy(right, async () => {
@@ -1391,11 +1430,18 @@ async function loadAddons() {
       loadAddons();
     }));
   }
-  if (a.error) txt.appendChild(el("small", "", a.error));
+  if (a.error && !(a.installed && a.running)) txt.appendChild(el("small", "", a.error));
   row.append(ic, txt, right);
   box.appendChild(row);
+  if (how) {
+    // How to use it: the usual confusion is "installed, now what?". Name = what the iPhone lists.
+    const h = el("div", "row"), hint = el("div", "hint");
+    hint.innerHTML = t("airplay.how", esc(a.name || "Android AirPlay"));
+    h.appendChild(hint);
+    box.appendChild(h);
+  }
   clearTimeout(addonPoll);
-  if (a.state === "downloading" || a.state === "installing") addonPoll = setTimeout(loadAddons, 1500);
+  if (busyState) addonPoll = setTimeout(loadAddons, 1500);
   else if (a.state === "done") loadApps();
 }
 
@@ -1456,6 +1502,78 @@ $("unpair").addEventListener("click", async () => {
   showPairing();
 });
 
+/* ---------------- app updates ---------------- */
+// The TV checks GitHub (at most daily, can be turned off); installing happens only on a tap here.
+let updInfo = null, updPoll = null, updFrom = null, updGone = false;
+const NOTES_RE = /^https:\/\/github\.com\/odinozlen\/odin-tv-magic\/releases\//;
+function fmtDay(ms) { try { return new Date(ms).toLocaleDateString(lang); } catch (e) { return ""; } }
+function renderUpdate(u) {
+  if (!u) return;
+  updInfo = u;
+  if (updFrom && u.current && u.current !== updFrom) {  // the new version answers: load its panel
+    try { sessionStorage.setItem("odintv-updated", u.current); } catch (e) {}
+    location.reload();
+    return;
+  }
+  const working = /^(downloading|verifying|installing)$/.test(u.state);
+  const show = !!u.available || working || updGone;
+  $("updTog").classList.toggle("on", !!u.enabled);
+  $("updCheck").disabled = !u.enabled;
+  $("updState").textContent = !u.enabled ? t("upd.off") : u.available ? t("upd.avail", u.latest)
+    : u.checked ? t("upd.current", u.current, fmtDay(u.checked)) : t("upd.never");
+  $("updCard").hidden = !show;
+  clearTimeout(updPoll);
+  if (!show) return;
+  const adbOk = !!caps.adb;
+  $("updTitle").textContent = t("upd.title", u.latest || "");
+  $("updText").textContent = updGone ? t("upd.restarting")
+    : u.state === "downloading" ? t("upd.dl", u.percent || 0)
+    : u.state === "verifying" ? t("upd.verifying")
+    : u.state === "installing" ? t("upd.installing")
+    : u.state === "error" ? (u.error || t("upd.failed"))
+    : adbOk ? t("upd.text", u.current) : t("upd.basic");
+  $("updGo").hidden = !adbOk || working || updGone;
+  const notes = u.notes_url && NOTES_RE.test(u.notes_url);
+  $("updNotes").hidden = !notes;
+  if (notes) $("updNotes").href = u.notes_url;
+  if (working || updGone) updPoll = setTimeout(loadUpdate, updGone ? 2000 : 1200);
+}
+async function loadUpdate() {
+  try {
+    const u = await api("/api/update");
+    updGone = false;
+    renderUpdate(u);
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) return;
+    // While the TV installs, the app is restarted: keep waiting for it.
+    if (updFrom) { updGone = true; renderUpdate(updInfo); }
+  }
+}
+$("updGo").addEventListener("click", e => {
+  if (!updInfo || !confirm(t("upd.confirm", updInfo.latest))) return;
+  busy(e.currentTarget, async () => {
+    const r = await api("/api/update/install", "POST");
+    updFrom = updInfo.current;
+    toast(r.msg);
+    await loadUpdate();
+  });
+});
+$("updTog").addEventListener("click", async () => {
+  const on = !$("updTog").classList.contains("on");
+  $("updTog").classList.toggle("on", on);
+  await saveSettings({ updateCheck: on });
+  loadUpdate();
+});
+$("updCheck").addEventListener("click", e => busy(e.currentTarget, async () => {
+  toast((await api("/api/update/check", "POST")).msg);
+  await loadUpdate();
+}));
+function updatedNotice() {
+  let v = null;
+  try { v = sessionStorage.getItem("odintv-updated"); sessionStorage.removeItem("odintv-updated"); } catch (e) {}
+  if (v) toast(t("upd.done", v));
+}
+
 function renderMadeBy() {
   const box = $("madeBy");
   box.textContent = "";
@@ -1494,6 +1612,7 @@ async function start() {  // eslint-disable-line
   let tab = "home";
   try { tab = localStorage.getItem("odintv-tab") || "home"; } catch (e) {}
   await refresh();
+  updatedNotice();
   await loadApps();
   loadDebloatCount();
   startOnboarding();

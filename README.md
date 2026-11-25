@@ -3,8 +3,8 @@
 ### Your smart TV is slow, full of junk, and the remote is lost again. Fix all three from your phone.
 
 **Odin TV Magic turns any phone browser into a fast remote for Android TV and Google TV, frees the TV's
-memory in one tap and switches off the pre-installed bloat. No app on the phone, no root, no cloud,
-nothing leaves your home network.**
+memory in one tap and switches off the pre-installed bloat. No app on the phone, no root, no cloud;
+the only request outside your home is a daily update check you can turn off.**
 
 [Türkçe](README.tr.md)
 
@@ -39,7 +39,7 @@ nothing leaves your home network.**
 | Screenshot of the TV screen | ✅ | |
 | **Change your TV's look**: switch to Projectivy or FLauncher (installs from the Play Store) and back | ✅ | |
 | **Speed up the TV**: suggests pre-installed apps to turn off (never uninstalls, one tap to undo) | ✅ (safe common list) | + tested Philips list |
-| **AirPlay** for TVs without it: one-tap install of an open-source receiver (checksum-verified) | ✅ | |
+| **AirPlay** for TVs without it: show your iPhone, iPad or Mac screen, photos and videos on the TV. One-tap install of an open-source receiver (checksum-verified); it then starts with the TV | ✅ | |
 | Party mode: a 45 s "your TV got hacked" show (off by default) | ✅ | + Ambilight effects |
 | Ambilight: on/off, follow video/music, 8 colours | | ✅ |
 | Picture style (Vivid, Natural, Movie, Game…) incl. HDR / Dolby Vision lists | | ✅ |
@@ -57,7 +57,7 @@ The phone UI is English or Turkish (follows the phone, switchable).
 
 The app talks to the TV's own debugging bridge (ADB) over loopback, the same way a computer would,
 so it can press keys, open apps and read state without root. On Philips TVs it also uses the TV's
-local JointSpace API. Nothing leaves your network.
+local JointSpace API. Nothing leaves your network except the update check (below).
 
 ## Install
 
@@ -105,6 +105,22 @@ styles and the TV tools need the setup; the panel dims them until then.
 After a reboot the app starts by itself. On Google TV it switches wireless debugging back on
 (this works on a Wi-Fi network you marked as trusted).
 
+## Updates
+
+Once a day the TV asks GitHub for the latest release
+(`https://api.github.com/repos/odinozlen/odin-tv-magic/releases/latest`, with the User-Agent
+`OdinTVMagic/<version>` and nothing else about you or the TV). When there is a newer version the panel shows
+*"1.0.x is ready – Update"* and the TV screen shows a line. Nothing is installed until you tap **Update**.
+Then the TV downloads the APK from the GitHub release, checks it against the release's
+`odin-tv-magic.apk.sha256` file, checks that it is signed with the same key as the installed app, and installs
+it through its own ADB connection (like `adb install -r`). Paired phones and settings stay; the panel reloads
+by itself after about a minute.
+
+- **Turn it off:** panel *Settings › Updates › Automatic update check*. Off means no request to GitHub at all.
+- **Without the ADB setup** (basic mode) the panel cannot install: on the TV, open *Downloader*, type
+  `odinozlen.com/tv` and install over the old version (settings and paired phones stay). From a computer:
+  `adb install -r odin-tv-magic.apk`.
+
 ## Security
 
 Read this before installing. [SECURITY.md](SECURITY.md) has the details.
@@ -118,6 +134,8 @@ Read this before installing. [SECURITY.md](SECURITY.md) has the details.
   the TV. **Never accept an "Allow debugging?" prompt you did not trigger.** Do not use this on public or
   shared networks, and never forward port 5555 or 8080 on your router.
 - Remove phones any time: panel *Settings › Paired phones*, or *Forget all phones* on the TV screen.
+- **Updates** only install when you tap *Update*, and only an APK that matches the release's SHA-256 file and
+  is signed with the same key as the installed app. The daily check can be turned off ([Updates](#updates)).
 
 ## Troubleshooting
 
@@ -135,6 +153,11 @@ Read this before installing. [SECURITY.md](SECURITY.md) has the details.
   copy the text and add it to your [issue](https://github.com/odinozlen/odin-tv-magic/issues): it lists
   only the TV model, Android version and what its JointSpace API reports. Newer Philips Google TV
   firmware is not tested yet.
+- **AirPlay: the TV does not appear on the iPhone:** open *Settings › AirPlay* in the panel. *On* means
+  the receiver runs; on the iPhone open Control Center › *Screen Mirroring* and pick the name shown there
+  (by default *Android AirPlay*), with the phone on the same Wi-Fi as the TV. *Installed but off*: tap
+  *Turn on*. On the TV the app is called *AirPlay Server* (under Apps); it does not need to stay open.
+  Before 1.0.3 the panel installed it but on Android 12+ / Google TV did not start it: tap *Turn on* once.
 - **Apps say "no internet" but the network works:** the TV clock is wrong and TLS fails. Turn on automatic
   date & time (`adb shell settings put global auto_time 1`).
 - **Google TV loses the connection after a reboot:** in *Wireless debugging* make sure *Always allow on this
@@ -168,7 +191,9 @@ scripts/setup-toolchain.sh   # pinned JDK 17 + Android SDK in .toolchain/ (check
 scripts/build.sh             # -> build/odin-tv-magic.apk
 ```
 
-`setup-toolchain.sh` asks you to accept Google's Android SDK license. Builds are signed with a personal key
+`setup-toolchain.sh` asks you to accept Google's Android SDK license. Releases upload two files:
+`odin-tv-magic.apk` and `odin-tv-magic.apk.sha256` (`shasum -a 256 odin-tv-magic.apk`); the in-app update
+refuses a release without the checksum file. Builds are signed with a personal key
 created in `~/.odin-tv-magic/` (keep it: Android only accepts updates signed with the same key).
 
 ## Compatibility

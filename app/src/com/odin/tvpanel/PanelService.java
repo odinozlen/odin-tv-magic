@@ -59,6 +59,7 @@ public final class PanelService extends Service {
                     panel = p;
                     p.log("panel started " + Panel.VERSION + ", port " + port);
                     p.startWatchdog();
+                    p.updater.start();
                     warmUp(p);
                     http.run();
                 } catch (Exception e) {

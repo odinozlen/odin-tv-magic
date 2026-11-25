@@ -146,12 +146,40 @@ final class Strings {
         put("addon.failed", "Installation failed", "Kurulum başarısız oldu");
         put("addon.verify", "The download did not match the expected file; nothing was installed",
                 "İndirilen dosya beklenenle eşleşmedi; hiçbir şey kurulmadı");
+        put("airplay.started", "AirPlay is on: the TV now appears on iPhone, iPad and Mac",
+                "AirPlay açık: TV artık iPhone, iPad ve Mac'te görünüyor");
+        put("airplay.not_started", "The AirPlay app is installed but did not start; open \"AirPlay Server\" on the TV once",
+                "AirPlay uygulaması yüklendi ama başlamadı; TV'de \"AirPlay Server\"ı bir kez aç");
+        put("airplay.missing", "The AirPlay app is not installed", "AirPlay uygulaması yüklü değil");
         put("addon.abi", "This app does not support this TV's processor", "Bu uygulama TV'nin işlemcisini desteklemiyor");
         put("debloat.limit", "Choose 1 to 10 apps at a time", "Bir seferde 1 ile 10 arası uygulama seç");
         put("debloat.disabled", "%d apps turned off. Check inputs, sound and the remote.",
                 "%d uygulama kapatıldı. Kaynakları, sesi ve kumandayı bir dene.");
         put("debloat.enabled", "%d apps turned back on", "%d uygulama tekrar açıldı");
         put("settings.saved", "Saved", "Kaydedildi");
+
+        // app updates (Updater)
+        put("update.found", "Version %s is available", "%s sürümü hazır");
+        put("update.none", "You have the latest version (%s)", "En yeni sürüm yüklü (%s)");
+        put("update.disabled", "Update check is turned off in Settings", "Güncelleme denetimi Ayarlar'da kapalı");
+        put("update.busy", "The update is already running", "Güncelleme zaten sürüyor");
+        put("update.started", "Downloading %s…", "%s indiriliyor…");
+        put("update.net", "Could not reach GitHub. Check the TV's internet connection and try again.",
+                "GitHub'a ulaşılamadı. TV'nin internet bağlantısını kontrol edip tekrar dene.");
+        put("update.no_apk", "This release has no app file yet. Try again later.", "Bu sürümde henüz uygulama dosyası yok. Biraz sonra tekrar dene.");
+        put("update.no_sha", "This release has no checksum file, so it cannot be verified. Nothing was installed.",
+                "Bu sürümde sağlama (checksum) dosyası yok, doğrulanamıyor. Hiçbir şey kurulmadı.");
+        put("update.verify", "The download did not match the release's checksum. Nothing was installed.",
+                "İndirilen dosya sürümün sağlamasıyla eşleşmedi. Hiçbir şey kurulmadı.");
+        put("update.signature", "The download is not signed with this app's key. Nothing was installed.",
+                "İndirilen dosya bu uygulamanın anahtarıyla imzalı değil. Hiçbir şey kurulmadı.");
+        put("update.older", "The download is not newer than this version. Nothing was installed.",
+                "İndirilen dosya bu sürümden yeni değil. Hiçbir şey kurulmadı.");
+        put("update.failed", "The TV did not install the update. Nothing was changed.", "TV güncellemeyi kurmadı. Hiçbir şey değişmedi.");
+        put("update.needs_adb", "Updating from the panel needs the setup on the TV. Without it: open Downloader on the TV and type odinozlen.com/tv.",
+                "Panelden güncellemek için TV'deki kurulum gerekir. Kurulum olmadan: TV'de Downloader'ı açıp odinozlen.com/tv yaz.");
+        put("tv.update", "Update %s is available: open the panel on your phone and tap Update.",
+                "%s güncellemesi hazır: telefondaki panelde Güncelle'ye dokun.");
 
         // TV screen (MainActivity)
         put("tv.title", "Odin TV Magic", "Odin TV Magic");

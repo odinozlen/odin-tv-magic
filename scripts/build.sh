@@ -31,7 +31,12 @@ rm -rf "$OUT"
 mkdir -p "$OUT/gen/com/odin/tvpanel" "$OUT/classes" "$OUT/assets/web" "$OUT/assets/debloat"
 cp "$APP"/web/* "$OUT/assets/web/"
 cp "$ROOT"/debloat/*.txt "$OUT/assets/debloat/"
-printf 'package com.odin.tvpanel;\nfinal class BuildInfo {\n    static final String VERSION = "%s";\n    private BuildInfo() { }\n}\n' "$VERSION" \
+# ODIN_UPDATE_TEST_BASE (testing only, never for releases): the update check asks this server
+# (<base>/latest.json, assets under <base>/) instead of GitHub, and plain HTTP is allowed for it.
+UPDATE_TEST_BASE="${ODIN_UPDATE_TEST_BASE:-}"
+case "$UPDATE_TEST_BASE" in *'"'*|*'\\'*) echo "bad ODIN_UPDATE_TEST_BASE" >&2; exit 1;; esac
+[ -z "$UPDATE_TEST_BASE" ] || echo "WARNING: test build, updates come from $UPDATE_TEST_BASE (do not release this APK)"
+printf 'package com.odin.tvpanel;\nfinal class BuildInfo {\n    static final String VERSION = "%s";\n    static final String UPDATE_TEST_BASE = "%s";\n    private BuildInfo() { }\n}\n' "$VERSION" "$UPDATE_TEST_BASE" \
   > "$OUT/gen/com/odin/tvpanel/BuildInfo.java"
 
 echo "[1/6] resources"

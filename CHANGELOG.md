@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.3
+
+Updates from the panel, and AirPlay that works.
+
+- The TV checks GitHub for a new version once a day (a fixed request with the User-Agent
+  `OdinTVMagic/<version>`, nothing about you or the TV). The panel shows "1.0.x is ready – Update" and the TV
+  screen shows a line. *Settings › Updates* has *Check now* and an off switch (off = no request at all).
+- **Update** installs only on a tap: the TV downloads the APK from the GitHub release, checks it against the
+  new `odin-tv-magic.apk.sha256` release file, checks that it is this app, newer and signed with the same key,
+  and installs it through its own ADB connection. Paired phones and settings stay; the panel reloads by itself.
+  Without the ADB setup the panel explains the Downloader route (`odinozlen.com/tv`).
+- Releases now also upload `odin-tv-magic.apk.sha256`; a release without it is not installed from the panel.
+- AGENTS.md: how to update an existing install, and the release steps.
+- The panel now really starts the AirPlay receiver after installing it. It used `monkey`, which quits
+  without doing anything on TVs without hardware system keys (Android 12, 14 and 16 emulators, Google
+  TV): the app was installed but never started, so the TV never appeared on the iPhone, not even after a
+  reboot. It now opens it with `am start`, waits until its service runs, and presses Home only when the
+  receiver is on screen.
+- The AirPlay card says what AirPlay is (show the iPhone, iPad or Mac screen, photos and videos on the
+  TV), whether the receiver is on, the name iPhones list it under, and how to use it (Control Center ›
+  Screen Mirroring). Installed but off: a *Turn on* button.
+- Tested on Android 8, 12, 14 (Google TV) and 16: install, start, iPhone-visible service on port 7000,
+  and start after a reboot.
+
 ## 1.0.2
 
 Make clear that the TV is used from the phone.
