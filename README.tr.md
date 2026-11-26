@@ -142,6 +142,11 @@ Kurmadan önce oku. Ayrıntılar: [SECURITY.md](SECURITY.md).
   telefon TV ile aynı Wi-Fi'da olmalı. *Yüklü ama kapalı* ise *Aç*'a dokun. TV'de uygulamanın adı *AirPlay
   Server*'dır (Uygulamalar'da); açık kalması gerekmez. 1.0.3'ten önce panel onu kuruyor ama Android 12+ /
   Google TV'de başlatmıyordu: bir kez *Aç*'a dokun.
+  iPhone bağlanıyor ama TV'de görüntü yoksa 1.0.4'e güncelle (alıcının ekranını açmasına izin verir).
+  Video için uygulamadaki AirPlay simgesini kullan (YouTube, Fotoğraflar): ekran yansıtma bazı TV'lerde
+  senkrondan kayabilir, uygulama içi AirPlay senkron kalır.
+- **"Hata ayıklamaya izin ver" penceresi geri gelmiyor:** cevapsız kapandıysa Android onu bekler ve yenilerini
+  atlar. Geliştirici seçeneklerinde *USB hata ayıklama*'yı kapatıp aç; uygulama yeniden sorar.
 - **Uygulamalar "internet yok" diyor ama ağ çalışıyor:** TV'nin saati yanlış, TLS başarısız oluyor. Otomatik
   tarih ve saati aç (`adb shell settings put global auto_time 1`).
 - **Google TV yeniden başlayınca bağlantı kopuyor:** *Kablosuz hata ayıklama*'da *Bu ağda her zaman izin ver*'in

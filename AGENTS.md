@@ -79,7 +79,9 @@ them, and must not accept prompts on their behalf.
    (step 1–3) with a button per step that opens the right settings screen:
    developer mode (*About › Build* pressed 7 times; the app comes back by itself) → *USB debugging*
    (and *Network debugging* if present) → the *"Allow debugging?"* prompt: tick *Always allow*, press
-   *Allow* (this is the app's own key). If the prompt does not show: *Show the window again* on the TV.
+   *Allow* (this is the app's own key). If the prompt does not show: *Show the window again* on the TV. If even that brings nothing, an earlier prompt was closed unanswered and Android skips new ones
+   until *USB debugging* is turned off and on (the TV screen says so and its button opens Developer
+   options; the app asks again by itself afterwards).
    If the TV has no network-debugging switch (some Google TV / Android 12+): *Wireless debugging*,
    *Pair device with pairing code*, and the code goes into the panel: *Settings › TV connection*. Tell
    them to tick *Always allow on this network*.

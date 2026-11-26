@@ -158,6 +158,11 @@ Read this before installing. [SECURITY.md](SECURITY.md) has the details.
   (by default *Android AirPlay*), with the phone on the same Wi-Fi as the TV. *Installed but off*: tap
   *Turn on*. On the TV the app is called *AirPlay Server* (under Apps); it does not need to stay open.
   Before 1.0.3 the panel installed it but on Android 12+ / Google TV did not start it: tap *Turn on* once.
+  The iPhone connects but the TV shows nothing: update to 1.0.4 (it lets the receiver open its screen).
+  For videos use the AirPlay button inside the app (YouTube, Photos): screen mirroring can drift out of
+  sync on some TVs, in-app AirPlay stays in sync.
+- **"Allow debugging?" does not come back:** if it was closed without an answer, Android waits for it and
+  skips new ones. Turn *USB debugging* off and on in Developer options; the app then asks again.
 - **Apps say "no internet" but the network works:** the TV clock is wrong and TLS fails. Turn on automatic
   date & time (`adb shell settings put global auto_time 1`).
 - **Google TV loses the connection after a reboot:** in *Wireless debugging* make sure *Always allow on this

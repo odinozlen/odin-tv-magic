@@ -140,7 +140,7 @@ final class Picture {
             SystemClock.sleep(300);
             ui.key("KEYCODE_DPAD_CENTER");
             SystemClock.sleep(600);
-            List<TvUi.Node> after = styleItems(ui.dump());
+            List<TvUi.Node> after = styleItems(confirmReminder());
             if (!after.isEmpty()) remember(after);
             if (!name.equals(current)) return new Panel.Result(500, "pic.style_failed");
             p.log("picture style: " + name);
@@ -233,6 +233,26 @@ final class Picture {
     /** "HDR Vivid" -> "Vivid", "Dolby Vision Game" -> "Game" */
     static String base(String s) {
         return s.replaceFirst("^(HDR|HLG|Dolby Vision)\\s+", "").trim();
+    }
+
+    /**
+     * Philips asks "Eco reminder: ECO is the most energy-friendly style… [Never] [OK]" when leaving
+     * ECO. The style is already changed, but the dialog covers the list and BACK does not close it,
+     * so the menu stayed open and the change looked failed. If the list is gone and the menu shows a
+     * dialog, press its default button (OK, focused by the TV; never "Never") and read the list again.
+     */
+    private List<TvUi.Node> confirmReminder() throws Exception {
+        List<TvUi.Node> all = ui.dump();
+        for (int i = 0; i < 2 && styleItems(all).isEmpty() && menuInFront(); i++) {
+            TvUi.Node button = null;
+            for (TvUi.Node n : all) if (n.focused && !n.text.isEmpty() && !n.checkable) button = n;
+            if (button == null) break;
+            p.log("picture: confirmed TV dialog with \"" + button.text + "\"");
+            ui.key("KEYCODE_DPAD_CENTER");
+            SystemClock.sleep(800);
+            all = ui.dump();
+        }
+        return all;
     }
 
     /** BACK only while the quick menu is still in front; otherwise it could close the app being watched. */

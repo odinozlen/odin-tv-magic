@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.4
+
+Fixes from the first full test round (13 TVs and emulators, Android 8–16).
+
+- AirPlay: the iPhone connected and sound played, but the TV showed nothing. Android blocked the
+  receiver from opening its screen from the background; the panel now gives it the "display over
+  other apps" permission (and on Android 13+ the notification permission) when it installs or turns
+  it on, and once for receivers installed by earlier versions. The AirPlay card adds: for videos, use
+  the AirPlay button inside the app (YouTube, Photos), which keeps sound in sync; screen mirroring can
+  drift on some TVs.
+- Philips: changing the picture style away from ECO showed "Could not change the picture style" and
+  left the TV's quick menu open behind an "Eco reminder" dialog. The panel now confirms that dialog
+  (OK, never "Never"), checks the new style and closes the menu.
+- "Allow debugging?" could get stuck: if the window closed without an answer, Android skips every new
+  one and "Show the window again" did nothing. The TV screen now says so after 10 s and the button
+  opens Developer options; after USB debugging is turned off and on, the app asks again by itself.
+  The app also no longer brings itself to the front while that window may be open.
+
 ## 1.0.3
 
 Updates from the panel, and AirPlay that works.

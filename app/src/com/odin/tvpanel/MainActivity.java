@@ -203,10 +203,27 @@ public final class MainActivity extends Activity {
             public void onChange(boolean self, Uri uri) {
                 Setup.Step was = shownStep;
                 if (was == null) return;
+                if (repromptOnAdb && Setup.usbDebugging(MainActivity.this)) {
+                    // The user turned USB debugging off and on as told: show the window again by itself.
+                    repromptOnAdb = false;
+                    resetStuckPrompt();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            reprompt();
+                        }
+                    }, 3000);
+                    return;
+                }
                 boolean done = (was == Setup.Step.DEV_OFF && Setup.developerMode(MainActivity.this))
                         || ((was == Setup.Step.ADB_OFF || was == Setup.Step.DEV_OFF) && Setup.usbDebugging(MainActivity.this));
                 if (!done) return;
                 fresh = false;
+                // Not while the TV may be showing "Allow debugging?": coming to the front would close
+                // that window unanswered, and Android then skips every new one (only turning USB
+                // debugging off and on helps).
+                Panel pp = PanelService.panel;
+                if (pp != null && "adb.waiting_approval".equals(pp.adb.state)) return;
                 if (!visible) {
                     try {
                         startActivity(new Intent(MainActivity.this, MainActivity.class)
@@ -298,10 +315,43 @@ public final class MainActivity extends Activity {
         Panel p = PanelService.panel;
         Setup.Step s = shownStep;
         if (s == null || p == null) return;
+        if (s == Setup.Step.APPROVE && promptStuck) {
+            // "Show the window again" did not bring it: open Developer options to turn USB debugging off/on.
+            for (Intent i : Setup.intents(Setup.Step.ADB_OFF)) {
+                try {
+                    startActivity(i);
+                    return;
+                } catch (ActivityNotFoundException | SecurityException ignored) {
+                    // next one
+                }
+            }
+            return;
+        }
         if (s == Setup.Step.APPROVE) {
-            // Dismissed, hidden behind this screen or never shown: drop the wait and connect again,
-            // which makes the TV show a new "Allow debugging?" window on top.
+            reprompt();
+            return;
+        }
+        for (Intent i : Setup.intents(s)) {
+            try {
+                startActivity(i);
+                return;
+            } catch (ActivityNotFoundException | SecurityException ignored) {
+                // next one
+            }
+        }
+        stepPath.setText(Strings.tv("setup.no_settings") + "\n" + Setup.path(s, kind));
+    }
+
+    /**
+     * Dismissed, hidden behind this screen or never shown: drop the wait and connect again, which
+     * makes the TV show a new "Allow debugging?" window on top.
+     */
+    private void reprompt() {
+        Panel p = PanelService.panel;
+        if (p == null) return;
+        {
             fresh = false;
+            repromptAt = SystemClock.elapsedRealtime();
             final Panel pp = p;
             new Thread(new Runnable() {
                 @Override
@@ -315,17 +365,7 @@ public final class MainActivity extends Activity {
                     });
                 }
             }, "setup-reprompt").start();
-            return;
         }
-        for (Intent i : Setup.intents(s)) {
-            try {
-                startActivity(i);
-                return;
-            } catch (ActivityNotFoundException | SecurityException ignored) {
-                // next one
-            }
-        }
-        stepPath.setText(Strings.tv("setup.no_settings") + "\n" + Setup.path(s, kind));
     }
 
     private final Runnable tick = new Runnable() {
@@ -355,6 +395,7 @@ public final class MainActivity extends Activity {
                     tryConnect(p);
                 }
                 showStep(step);
+                checkStuckPrompt(step);
 
                 StringBuilder s = new StringBuilder();
                 if (step == Setup.Step.DONE) {
@@ -374,6 +415,46 @@ public final class MainActivity extends Activity {
             if (visible) handler.postDelayed(this, 1000);
         }
     };
+
+    private long repromptAt;
+    private boolean promptStuck, repromptOnAdb;
+
+    /**
+     * If "Show the window again" brought nothing within 10 s, Android is still waiting for an earlier
+     * prompt that was closed unanswered and skips new ones ("prompt currently pending"). Say so and
+     * turn the button into "Open Developer options": switching USB debugging off and on resets it.
+     */
+    private void checkStuckPrompt(Setup.Step step) {
+        Panel p = PanelService.panel;
+        if (step != Setup.Step.APPROVE) {
+            repromptAt = 0;
+            promptStuck = false;
+            return;
+        }
+        if (promptStuck && p != null && !"adb.waiting_approval".equals(p.adb.state)) {
+            // The old wait ended (ADB restarted, e.g. USB debugging off/on): "Show the window again" works again.
+            resetStuckPrompt();
+            return;
+        }
+        if (promptStuck || repromptAt == 0 || SystemClock.elapsedRealtime() - repromptAt < 10_000) return;
+        promptStuck = true;
+        repromptOnAdb = true;
+        stepBody.setText(Strings.tv("setup.b.approve_stuck"));
+        stepButton.setText(Strings.tv("setup.btn.dev"));
+        stepButton.setVisibility(View.VISIBLE);
+        focusStepButton();
+    }
+
+    private void resetStuckPrompt() {
+        boolean was = promptStuck;
+        promptStuck = false;
+        repromptAt = 0;
+        if (was && shownStep == Setup.Step.APPROVE) {
+            stepBody.setText(Setup.body(Setup.Step.APPROVE, kind));
+            String label = Setup.button(Setup.Step.APPROVE);
+            if (label != null) stepButton.setText(label);
+        }
+    }
 
     private void showStep(Setup.Step step) {
         if (step == shownStep) return;

@@ -180,6 +180,7 @@ final class Panel {
             return out;
         }
         out.put("caps", caps(true, jsOk));
+        addons.ensurePermissionsOnce();
         out.put("sources", sources.json());
         if (!out.optBoolean("foreground_home")) {
             String active = sources.activeInput(LIVE_TV_APPS.contains(out.optString("foreground")));

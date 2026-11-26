@@ -15,7 +15,7 @@ import java.util.List;
 final class TvUi {
     static final class Node {
         String text, cls;
-        boolean checkable, checked, selected, enabled;
+        boolean checkable, checked, selected, enabled, focused, clickable;
     }
 
     private final AdbClient adb;
@@ -40,6 +40,8 @@ final class TvUi {
             n.checked = "true".equals(attr(x, "checked"));
             n.selected = "true".equals(attr(x, "selected"));
             n.enabled = "true".equals(attr(x, "enabled"));
+            n.focused = "true".equals(attr(x, "focused"));
+            n.clickable = "true".equals(attr(x, "clickable"));
             nodes.add(n);
         }
         return nodes;

@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.SystemClock;
 
 import org.json.JSONObject;
@@ -94,6 +95,41 @@ final class Addons {
                 .put("sizeMb", AIRPLAY_SIZE / 1_000_000));
     }
 
+    private volatile boolean permissionsChecked;
+
+    /**
+     * The receiver opens its full-screen view when an iPhone connects. Android blocks that from the
+     * background unless the app may "display over other apps": without it the iPhone connects, sound
+     * plays, and the TV shows nothing. Android 13+ also needs the notification permission for its
+     * foreground-service notice. Both are what the user would grant in Settings, given through ADB.
+     */
+    private void grantPermissions() throws Exception {
+        if (!p.adb.shell("appops get " + AIRPLAY + " SYSTEM_ALERT_WINDOW").contains(": allow")) {
+            p.adb.shell("appops set " + AIRPLAY + " SYSTEM_ALERT_WINDOW allow");
+            p.log("AirPlay receiver: allowed to show its screen on connect");
+        }
+        if (Build.VERSION.SDK_INT >= 33) {
+            p.adb.shell("pm grant " + AIRPLAY + " android.permission.POST_NOTIFICATIONS 2>/dev/null");
+        }
+        permissionsChecked = true;
+    }
+
+    /** Receivers installed by 1.0.3 or earlier lack the permissions: give them once ADB works. */
+    void ensurePermissionsOnce() {
+        if (permissionsChecked || !installed(AIRPLAY)) return;
+        permissionsChecked = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    grantPermissions();
+                } catch (Exception e) {
+                    permissionsChecked = false;   // try again with the next status
+                }
+            }
+        }, "airplay-perms").start();
+    }
+
     /** The receiver's launcher activity ("pkg/cls"), or null. */
     private String launcherComponent() {
         PackageManager pm = ctx.getPackageManager();
@@ -117,6 +153,7 @@ final class Addons {
         if (!installed(AIRPLAY)) return new Panel.Result(404, "airplay.missing");
         String comp = launcherComponent();
         if (comp == null) return new Panel.Result(500, "airplay.not_started");
+        grantPermissions();
         p.adb.shell("am start -n " + Panel.shellQuote(comp));
         boolean running = false;
         for (int i = 0; i < 20 && !(running = serviceRunning()); i++) SystemClock.sleep(500);

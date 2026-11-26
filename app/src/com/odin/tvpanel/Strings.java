@@ -235,6 +235,8 @@ final class Strings {
         put("setup.b.checking", "One moment.", "Bir saniye.");
         put("setup.b.approve", "The TV shows \"Allow debugging?\": tick \"Always allow\" and press \"Allow\". Not visible? Press the button. Still nothing: turn USB debugging off and on again.",
                 "TV'de \"Hata ayıklamaya izin verilsin mi?\" penceresi çıkar: \"Her zaman izin ver\"i işaretle ve \"İzin ver\"e bas. Görünmüyorsa düğmeye bas; yine çıkmazsa USB hata ayıklamayı kapatıp tekrar aç.");
+        put("setup.b.approve_stuck", "The window did not come back: the TV still waits for an earlier one that was closed. In Developer options turn USB debugging off and on again; the window then appears.",
+                "Pencere geri gelmedi: TV daha önce kapanan bir pencereyi hâlâ bekliyor. Geliştirici seçeneklerinde USB hata ayıklamayı kapatıp tekrar aç; pencere o zaman çıkar.");
         put("setup.path.about.android_tv", "If the button does not work: Settings › Device Preferences › About",
                 "Düğme çalışmazsa: Ayarlar › Cihaz Tercihleri › Hakkında");
         put("setup.path.about.google_tv", "If the button does not work: Settings › System › About",
